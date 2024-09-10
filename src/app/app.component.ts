@@ -22,6 +22,6 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     // Get user role from AuthService
     this.userRole = 'admin';
-    this.router.navigateByUrl('/admin');
+    //this.router.navigateByUrl('/admin');
   }
 }
