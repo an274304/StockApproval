@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CategoryMngService } from '../../../services/category-mng.service';
 import { CategoryMasterDTO } from '../../../../core/Models/CategoryMaster';
 import { ApiResult } from '../../../../core/DTOs/ApiResult';
@@ -17,35 +17,27 @@ export class CategoryMngComponent implements OnInit {
   // Directly bind the Category ApiResult type
   categoryApiResult: ApiResult<CategoryMasterDTO> = { dataList: [], result: false, message: 'Connection Not Available.' };
 
+  categoryService = inject(CategoryMngService);
 
-  constructor(private categoryService: CategoryMngService) {
+  constructor() {
 
   }
 
   ngOnInit(): void {
-    this.bindCategory();
+   // this.bindCategory();
   }
+  
   bindCategory() {
-    this.categoryService.getCategories().pipe(
-      catchError(err => {
+    debugger;
+    this.categoryService.getCategories().subscribe({
+      next: (response: ApiResult<CategoryMasterDTO>) => {
+        this.categoryApiResult = response;
+      },
+      error: (err) => {
         console.error('Error fetching categories', err);
         this.categoryApiResult = { dataList: [], result: false, message: 'Error fetching categories' };
-        return of(this.categoryApiResult); // Return a safe default value
-      })
-    ).subscribe(response => {
-      this.categoryApiResult = response;
+      }
     });
   }
-  // bindCategory() {
-  //   debugger;
-  //   this.categoryService.getCategories().subscribe({
-  //     next: (response: ApiResult<CategoryMasterDTO>) => {
-  //       this.categoryApiResult = response;
-  //     },
-  //     error: (err) => {
-  //       console.error('Error fetching categories', err);
-  //       this.categoryApiResult = { dataList: [], result: false, message: 'Error fetching categories' };
-  //     }
-  //   });
-  // }
+
 }

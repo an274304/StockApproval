@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ApiUrl } from '../../core/Constant/ApiUrl';
 import { CategoryMasterDTO } from '../../core/Models/CategoryMaster';
 import { ApiResult } from '../../core/DTOs/ApiResult';
@@ -10,7 +10,9 @@ import { Observable } from 'rxjs';
 })
 export class CategoryMngService {
 
-  constructor(private http : HttpClient) { }
+  http = inject(HttpClient);
+
+  constructor() { }
 
   // getCategories(){
   //   debugger;
