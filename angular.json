@@ -21,7 +21,11 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              "src/assets/images/avatars/01.png",
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets/"
+              },
               {
                 "glob": "**/*",
                 "input": "public"

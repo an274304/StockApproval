@@ -22,7 +22,7 @@ Table of Index
 
 */
 /* Genral*/
-@import url("../../../../../cdn.jsdelivr.net/npm/bootstrap-icons%401.11.1/font/bootstrap-icons.css");
+@import url("../CDN/bootstrap-icons@1.11.1/font/bootstrap-icons.css");
 body {
   position: relative;
   font-size: 14px;
@@ -200,6 +200,12 @@ input::placeholder {
   width: 360px;
   border-radius: 1rem;
 }
+
+.top-header .navbar .nav-item .dropdown-notify-custom {
+  width: 250px;
+  border-radius: 1rem;
+}
+
 .top-header .navbar .nav-item .dropdown-notify .option {
   font-size: 1rem;
   color: #494949;
