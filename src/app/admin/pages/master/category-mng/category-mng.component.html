@@ -26,66 +26,66 @@
                       </div>
                     </div>
                     <div class="order-search position-relative my-3">
-                      <input class="form-control rounded-5 px-5" type="text" placeholder="Search">
+                      <input  [(ngModel)]="searchTerm"   (ngModelChange)="onSearchChange()" class="form-control rounded-5 px-5" type="text" placeholder="Search">
                       <span class="material-icons-outlined position-absolute ms-3 translate-middle-y start-0 top-50">search</span>
                     </div>
-                     <div class="table-responsive">
+                     <div class="table-responsive user-list">
                          <table class="table align-middle">
                             <tbody>
-
-                                @for (item of categoryApiResult.dataList; track $index) {
-                                    <tr>
+                                @for(item of filteredCategories; track $index) {
+                                    <tr (click)="onSelectCategory(item)">
                                         <td>{{item.catName}}</td>
                                       </tr>
                                 }
-
-                           
                             </tbody>
                          </table>
                      </div>
                   </div>
                 </div>
               </div>
-            <div class="col-12 col-lg-9">
+              <div class="col-12 col-lg-9">
                 <div class="card border-top border-3 border-danger rounded-0">
                     <div class="card-header py-3 px-4">
-                        <h5 class="mb-0 text-danger">New Category</h5>
+                        <h5 class="mb-0 text-danger">{{selectedCat ? 'Update' : 'New'}} Category</h5>
                     </div>
                     <div class="card-body p-4">
-                        <form class="row g-3">
+                        <form [formGroup]="catForm" class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Category Name</label>
-                                <input type="text" class="form-control rounded-0" placeholder="Category Name">
+                              <label class="form-label">Category Name</label>
+                              <input type="text" formControlName="catName" class="form-control rounded-0" placeholder="Category Name">
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label">Category Code</label>
-                                <input type="text" class="form-control rounded-0" placeholder="Category Code">
+                              <label class="form-label">Category Code</label>
+                              <input type="text" formControlName="catCode" class="form-control rounded-0" placeholder="Category Code">
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label">Category Prefix</label>
-                                <input type="text" class="form-control rounded-0" placeholder="Category Prefix">
+                              <label class="form-label">Category Prefix</label>
+                              <input type="text" formControlName="catPrefix" class="form-control rounded-0" placeholder="Category Prefix">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Vendor</label>
-                                <select class="form-select rounded-0">
-                                    <option selected="">Choose...</option>
-                                    <option>One</option>
-                                    <option>Two</option>
-                                    <option>Three</option>
-                                </select>
+                              <label class="form-label">Vendor</label>
+                              <select formControlName="catVendorId" class="form-select rounded-0">
+                                <option value="" disabled>Choose...</option>
+                                <option *ngFor="let vendor of vendors" [value]="vendor.value">{{ vendor.text }}</option>
+                              </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Category Image</label>
-                                <input type="file" class="form-control rounded-0">
+                              <label class="form-label">Category Image</label>
+                              <input formControlName="catImg"  (change)="onFileChange($event)" #catFileInput type="file" class="form-control rounded-0" accept="image/*">
+                              <img *ngIf="imagePreviewUrl" [src]="imagePreviewUrl" alt="Image Preview"  class="img-thumbnail"/>
                             </div>
                             <div class="col-md-12">
-                                <div class="d-md-flex d-grid align-items-center gap-3">
-                                    <button type="button" class="btn btn-outline-success flex-fill"><i class="bi bi-cloud-download me-2"></i>Submit</button>
-                                    <button type="button" class="btn btn-outline-danger flex-fill"><i class="bi bi-x-circle me-2"></i>Reset</button>
-                                    
-                                </div>
+                              <div class="d-md-flex d-grid align-items-center gap-3">
+                                <button type="button" (click)="submitForm()" class="btn btn-outline-success flex-fill">
+                                  <i class="bi bi-box-arrow-up me-2"></i> Submit
+                                </button>
+                                <button type="button" (click)="resetForm()" class="btn btn-outline-danger flex-fill">
+                                  <i class="bi bi-x-circle me-2"></i> Reset
+                                </button>
+                              </div>
                             </div>
-                        </form>
+                          </form>
+                          
                     </div>
                 </div>
             </div>

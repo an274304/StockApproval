@@ -1,4 +1,4 @@
-export class CategoryMasterDTO {
+export class CategoryMaster {
   id?: number;  
   catVendorId?: number;
   catName?: string;
@@ -12,7 +12,7 @@ export class CategoryMasterDTO {
   updated?: Date;
   updatedBy?: string;
 
-  constructor(init?: Partial<CategoryMasterDTO>) {
+  constructor(init?: Partial<CategoryMaster>) {
     if (init) {
       Object.assign(this, init);
     }
