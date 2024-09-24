@@ -20,6 +20,10 @@ import { DisposeItemComponent } from './pages/stock/dispose-item/dispose-item.co
 import { AvailableItemComponent } from './pages/stock/available-item/available-item.component';
 
 const routes: Routes = [
+  { 
+    path : "",  //Default Component to load from admin section
+    component : BranchMngComponent
+  },
   {
     path:"category",
     component:CategoryMngComponent

@@ -40,5 +40,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.globalState.clear();  // Clear global state
     this.router.navigate(['/login']);  // Redirect to login
     this.userRole ='';
+    this.authService.Logout();
   }
 }

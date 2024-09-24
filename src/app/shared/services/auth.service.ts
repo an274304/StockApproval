@@ -6,6 +6,8 @@ import { BehaviorSubject, of } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
+  
+  private isLoggedIn = false;
   private userSubject = new BehaviorSubject<any>(null);
   user$ = this.userSubject.asObservable();
 
@@ -17,7 +19,12 @@ export class AuthService {
     this.userSubject.next(user);
   }
 
+  isAuthenticated() : boolean { return this.isLoggedIn;}
+
   LogIn(Email:string, Password:string, isRemember:boolean){
+
+    this.isLoggedIn = true;
+
     // Statically return values for testing purposes
     return of({
       token: 'sample-token-123456',
@@ -25,6 +32,10 @@ export class AuthService {
       userId: '12345',
       userRole: 'admin'
     });
+  }
+
+  Logout() {
+    this.isLoggedIn=false;
   }
 
   //// For Api Hit
