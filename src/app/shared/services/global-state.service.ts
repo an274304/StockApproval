@@ -9,7 +9,7 @@ export class GlobalStateService {
   private userNameKey = 'userName';
   private userIdKey = 'userId';
   private userRoleKey = 'userRole';
-  private userIsAuthenticated = 'false';
+  private userIsAuthenticated = 'userIsAuthenticated';
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 

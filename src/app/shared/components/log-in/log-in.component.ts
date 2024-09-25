@@ -41,8 +41,6 @@ export class LogInComponent implements OnInit, AfterViewInit {
           this.globalState.setUserId(response.userId);
           this.globalState.setUserRole(response.userRole);
           this.globalState.setIsAuthenticated('true');
-          
-          this.authService.setUser(response.userRole);
           this.redirectBasedOnRole();
         },
         error: () => {
@@ -54,7 +52,6 @@ export class LogInComponent implements OnInit, AfterViewInit {
 
   redirectBasedOnRole(): void {
     const userRole = this.globalState.getUserRole();
-    this.authService.setUser(userRole);
 
     if (userRole === 'admin') {
       this.router.navigate(['/admin']);

@@ -1,29 +1,20 @@
 import { Routes } from '@angular/router';
 import { LogInComponent } from './shared/components/log-in/log-in.component';
 import { AppComponent } from './app.component';
-import { AuthGaurd } from './core/auth.guard';
+import { AuthGaurd } from './core/Guards/auth.guard';
+import { AdminLayoutComponent } from './admin/components/admin-layout/admin-layout.component';
 
 export const routes: Routes = [
-  { path: '', 
-    component: AppComponent,
+
+  { 
+    path: 'admin', 
+    component : AdminLayoutComponent,
     canActivate: [AuthGaurd],
-    children:[
-      { 
-        path: 'admin', 
-        loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) 
-      },
-      { 
-        path: 'director', 
-        loadChildren: () => import('./director/director.module').then(m => m.DirectorModule) 
-      },
-      { 
-        path: 'account', 
-        loadChildren: () => import('./accounts/accounts.module').then(m => m.AccountsModule) 
-      }
-    ]
-   },  // Default route
-  { path: 'login', component: LogInComponent },  // Login page
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) 
+  },
+  { path: 'login', component: LogInComponent }, 
   { path: 'app', component: AppComponent },
-  // Wildcard route for handling unknown URLs (redirect to login)
+  { path: '', redirectTo: '/app', pathMatch: 'full' }, // Added pathMatch to avoid unwanted redirects
   { path: '**', redirectTo: '/login' }
+
 ];
