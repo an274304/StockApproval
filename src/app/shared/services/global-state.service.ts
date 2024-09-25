@@ -9,6 +9,7 @@ export class GlobalStateService {
   private userNameKey = 'userName';
   private userIdKey = 'userId';
   private userRoleKey = 'userRole';
+  private userIsAuthenticated = 'false';
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -69,12 +70,26 @@ export class GlobalStateService {
     return null;
   }
 
+  setIsAuthenticated(IsAuthenticated: string): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(this.userIsAuthenticated, IsAuthenticated);
+    }
+  }
+
+  getIsAuthenticated(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem(this.userIsAuthenticated);
+    }
+    return null;
+  }
+
   clear(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem(this.tokenKey);
       localStorage.removeItem(this.userNameKey);
       localStorage.removeItem(this.userIdKey);
       localStorage.removeItem(this.userRoleKey);
+      localStorage.removeItem(this.userIsAuthenticated);
     }
   }
 }

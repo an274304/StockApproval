@@ -1,13 +1,15 @@
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, CanActivate, GuardResult, MaybeAsync, Router, RouterStateSnapshot } from "@angular/router";
+import { CanActivate, Router} from "@angular/router";
 import { AuthService } from "../shared/services/auth.service";
+import { GlobalStateService } from "../shared/services/global-state.service";
 
 @Injectable({providedIn:"root"})
 export class AuthGaurd implements CanActivate{
-constructor(private authService : AuthService, private router: Router){}
+constructor(private authService : AuthService, private globalState: GlobalStateService, private router: Router){}
 
 canActivate():boolean {
-    if (this.authService.isAuthenticated())
+
+     if (this.globalState.getIsAuthenticated())
     {
         return true;
     }
@@ -16,5 +18,15 @@ canActivate():boolean {
         this.router.navigate(['/login']);
         return false;
     }
+
+    // if (this.authService.isAuthenticated())
+    // {
+    //     return true;
+    // }
+    // else 
+    // {
+    //     this.router.navigate(['/login']);
+    //     return false;
+    // }
 }
 }

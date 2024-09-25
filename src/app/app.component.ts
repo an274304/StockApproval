@@ -24,22 +24,41 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.userRole = this.globalState.getUserRole();
-    // this.authService.user$.subscribe(user => {
-    //   this.userRole = user;
-      
-    // });
+    if(this.globalState.getIsAuthenticated() == 'true'){
 
+      this.redirectBasedOnRole();
+
+      this.authService.user$.subscribe(user => {
+        this.userRole = user;
+      });
+      
+    }
+    else{
+      this.router.navigate(['/login']);  // Redirect to login
+    }
   }
 
   ngAfterViewInit(): void {
    
   }
 
+  redirectBasedOnRole(): void {
+    const userRole = this.globalState.getUserRole();
+    this.authService.setUser(userRole);
+
+    if (userRole === 'admin') {
+      this.router.navigate(['/admin']);
+    } else if (userRole === 'director') {
+      this.router.navigate(['/director']);
+    } else if (userRole === 'account') {
+      this.router.navigate(['/accounts']);
+    }
+  }
+
   logOut(): void {
+    this.userRole = null;
     this.globalState.clear();  // Clear global state
-    this.router.navigate(['/login']);  // Redirect to login
-    this.userRole ='';
     this.authService.Logout();
+    this.router.navigate(['/login']);  // Redirect to login
   }
 }

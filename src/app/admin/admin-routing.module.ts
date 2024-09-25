@@ -22,7 +22,7 @@ import { AvailableItemComponent } from './pages/stock/available-item/available-i
 const routes: Routes = [
   { 
     path : "",  //Default Component to load from admin section
-    component : BranchMngComponent
+    component : NewPurchaseFormComponent
   },
   {
     path:"category",

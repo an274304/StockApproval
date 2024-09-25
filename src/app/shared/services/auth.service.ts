@@ -36,6 +36,7 @@ export class AuthService {
 
   Logout() {
     this.isLoggedIn=false;
+    this.userSubject.next(null);
   }
 
   //// For Api Hit

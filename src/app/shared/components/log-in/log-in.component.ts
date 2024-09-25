@@ -40,6 +40,8 @@ export class LogInComponent implements OnInit, AfterViewInit {
           this.globalState.setUserName(response.userName);
           this.globalState.setUserId(response.userId);
           this.globalState.setUserRole(response.userRole);
+          this.globalState.setIsAuthenticated('true');
+          
           this.authService.setUser(response.userRole);
           this.redirectBasedOnRole();
         },
