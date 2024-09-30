@@ -1,20 +1,30 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PurchaseOrderWitItems } from '../../../../core/DTOs/PurchaseOrderWitItems';
 import { PurchaseOrder } from '../../../../core/Models/PurchaseOrder';
 import { PurchaseItem } from '../../../../core/Models/PurchaseItem';
 import { PurchaseMngService } from '../../../services/purchase-mng.service';
 import { ApiResult } from '../../../../core/DTOs/ApiResult';
+import { CategoryMaster } from '../../../../core/Models/CategoryMaster';
+import { CategoryMngService } from '../../../services/category-mng.service';
+import { ProductMngService } from '../../../services/product-mng.service';
+import { ProductMaster } from '../../../../core/Models/ProductMaster';
+import { VendorMaster } from '../../../../core/Models/VendorMaster';
+import { VendorMngService } from '../../../services/vendor-mng.service';
 
 @Component({
   selector: 'app-new-purchase-form',
   standalone: true,
-  imports : [FormsModule,CommonModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './new-purchase-form.component.html',
   styleUrls: ['./new-purchase-form.component.css']
 })
-export class NewPurchaseFormComponent {
+export class NewPurchaseFormComponent implements OnInit {
+  catListApiResult: ApiResult<CategoryMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
+  productListApiResult: ApiResult<ProductMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
+  vendorListApiResult: ApiResult<VendorMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
+  
   // Properties bound to form inputs
   catId: number = 0;
   catName: string = '';
@@ -27,7 +37,7 @@ export class NewPurchaseFormComponent {
   itemRate: number = 0;
   itemQty: number = 0;
   amount: number = 0;
-  
+
   currency: string = '';
   purchaseOrderNo: string = '';
   purchaseOrderRemark: string = '';
@@ -36,20 +46,35 @@ export class NewPurchaseFormComponent {
   // Array to hold the mapped PurchaseItem objects
   purchaseItems: PurchaseItem[] = [];
 
+  filteredCategories: CategoryMaster[] = [];
+  filteredProducts: ProductMaster[] = [];
+  filteredVendors: VendorMaster[] = [];
+
   private purchaseService = inject(PurchaseMngService);
-  purchaseOrderSaveApi : PurchaseOrder | null =null;
+  private categoryService = inject(CategoryMngService);
+  private productService = inject(ProductMngService);
+  private vendorService = inject(VendorMngService);
+  
+  purchaseOrderSaveApi: PurchaseOrder | null = null;
+
+  ngOnInit(): void {
+    this.loadCategories();
+    this.loadProductes();
+    this.loadVendors();
+  }
+  
 
   //#region Form submit
-  onFormSubmit(){
+  onFormSubmit() {
     this.mapTableItemsToPurchaseItems();
 
     const newOrder = new PurchaseOrder({
-      purchaseOrderDt : new Date(this.purchaseOrderDt),
+      purchaseOrderDt: new Date(this.purchaseOrderDt),
       purchaseExpDelDt: new Date(this.purchaseDeliveryDt),
       purchaseCurrency: this.currency,
       purchaseRemark: this.purchaseOrderRemark,
-      created : new Date(new Date().toISOString()),
-      createdBy : 'valueFromSession'
+      created: new Date(new Date().toISOString()),
+      createdBy: 'valueFromSession'
     });
 
     // Initialize PurchaseOrderWitItems
@@ -61,15 +86,15 @@ export class NewPurchaseFormComponent {
 
     this.purchaseService.purchaseOrder(orderWithItems).subscribe({
       next: (response: ApiResult<PurchaseOrder>) => {
-        if(response.result){
+        if (response.result) {
           this.purchaseOrderSaveApi = response.data ?? null;
           this.purchaseOrderNo = this.purchaseOrderSaveApi?.purchaseOrderNo ?? '';
           alert('Save Successfully.. Check Your Order no.');
         }
-        else{
+        else {
           alert('Fail To Save');
         }
-        
+
       },
       error: (err) => {
         console.error('Error fetching Users', err);
@@ -82,11 +107,11 @@ export class NewPurchaseFormComponent {
   // Method to map tableItems to PurchaseItem
   mapTableItemsToPurchaseItems() {
     this.purchaseItems = this.tableItems.map(item => new PurchaseItem({
-      catId:item.catId,
-      catName:item.catName,
-      proId:item.proId,
+      catId: item.catId,
+      catName: item.catName,
+      proId: item.proId,
       proName: item.proName,
-      venId:item.venId,
+      venId: item.venId,
       venName: item.venName,
       itemName: item.itemName,
       itemRemark: item.itemRemark,
@@ -102,19 +127,20 @@ export class NewPurchaseFormComponent {
   //#region - Table Logics
 
   // Array to hold the table data
-  tableItems: Array<{ catId:number;
-                      catName:string;
-                      proId:number;
-                      proName: string;
-                      venId:number;
-                      venName: string;
-                      itemName: string;
-                      itemRemark: string; 
-                      itemRate: number; 
-                      itemQty: number; 
-                      total: number 
-                    }> = [];
-  
+  tableItems: Array<{
+    catId: number;
+    catName: string;
+    proId: number;
+    proName: string;
+    venId: number;
+    venName: string;
+    itemName: string;
+    itemRemark: string;
+    itemRate: number;
+    itemQty: number;
+    total: number
+  }> = [];
+
   // Variable to hold the total amount
   totalAmount: number = 0;
 
@@ -122,19 +148,19 @@ export class NewPurchaseFormComponent {
   addRow() {
     // Create a new item with the values from the form
     const newItem = {
-        catId:this.catId,
-        catName:this.catName,
-        proId:this.proId,
-        proName: this.proName,
-        venId:this.venId,
-        venName: this.venName,
-        itemName: this.itemName,
-        itemRemark: this.itemRemark,
-        itemRate: this.itemRate,
-        itemQty: this.itemQty, 
-        total: this.amount
+      catId: this.catId,
+      catName: this.catName,
+      proId: this.proId,
+      proName: this.proName,
+      venId: this.venId,
+      venName: this.venName,
+      itemName: this.itemName,
+      itemRemark: this.itemRemark,
+      itemRate: this.itemRate,
+      itemQty: this.itemQty,
+      total: this.amount
     };
-    
+
     // Add the new item to the table
     this.tableItems.push(newItem);
 
@@ -161,26 +187,26 @@ export class NewPurchaseFormComponent {
     this.itemRemark = '';
   }
 
- // Method to remove a row
- removeRow(index: number) {
-  this.tableItems.splice(index, 1); // Remove the item at the specified index
-  this.updateTotal(); // Update the total amount after removing the row
-}
+  // Method to remove a row
+  removeRow(index: number) {
+    this.tableItems.splice(index, 1); // Remove the item at the specified index
+    this.updateTotal(); // Update the total amount after removing the row
+  }
 
-  calculateAmount(){
+  calculateAmount() {
     this.amount = this.itemRate * this.itemQty;
   }
 
-    // Method to handle product change event
-    onCategoryChange(event: Event) {
-      const target = event.target as HTMLSelectElement;
-      const selectedOption = target.options[target.selectedIndex];
-      this.catName = selectedOption.text;
-    }
+  // Method to handle product change event
+  onCategoryChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const selectedOption = target.options[target.selectedIndex];
+    this.catName = selectedOption.text;
+  }
 
-    
-   // Method to handle product change event
-   onProductChange(event: Event) {
+
+  // Method to handle product change event
+  onProductChange(event: Event) {
     const target = event.target as HTMLSelectElement;
     const selectedOption = target.options[target.selectedIndex];
     this.proName = selectedOption.text;
@@ -193,11 +219,53 @@ export class NewPurchaseFormComponent {
     this.venName = selectedOption.text;
   }
 
-   // Method to handle currency change event
-   onCurrencyChange(event: Event) {
+  // Method to handle currency change event
+  onCurrencyChange(event: Event) {
     const target = event.target as HTMLSelectElement;
     const selectedOption = target.options[target.selectedIndex];
     this.currency = selectedOption.text;
   }
   //#endregion
+
+//#region Bind Drop Downs
+private loadCategories(): void {
+  this.categoryService.getCategories().subscribe({
+    next: (response: ApiResult<CategoryMaster>) => {
+      this.catListApiResult = response;
+      this.filteredCategories = response.dataList ?? [];
+    },
+    error: (err) => {
+      console.error('Error fetching categories', err);
+      this.catListApiResult = { dataList: [], result: false, message: 'Error fetching categories' };
+      this.filteredCategories = [];
+    }
+  });
+}
+private loadProductes(): void {
+  this.productService.getProducts().subscribe({
+    next: (response: ApiResult<ProductMaster>) => {
+      this.productListApiResult = response;
+      this.filteredProducts = response.dataList ?? [];
+    },
+    error: (err) => {
+      console.error('Error fetching products', err);
+      this.productListApiResult = { dataList: [], result: false, message: 'Error fetching products' };
+      this.filteredProducts = [];
+    }
+  });
+}
+private loadVendors(): void {
+  this.vendorService.getVendors().subscribe({
+    next: (response: ApiResult<VendorMaster>) => {
+      this.vendorListApiResult = response;
+      this.filteredVendors = response.dataList ?? [];
+    },
+    error: (err) => {
+      console.error('Error fetching vendors', err);
+      this.vendorListApiResult = { dataList: [], result: false, message: 'Error fetching vendors' };
+      this.filteredVendors = [];
+    }
+  });
+}
+//#endregion Bind Drop Downs
 }

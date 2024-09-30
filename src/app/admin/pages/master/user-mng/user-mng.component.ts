@@ -4,6 +4,12 @@ import { UserMaster } from '../../../../core/Models/UserMaster';
 import { ApiResult } from '../../../../core/DTOs/ApiResult';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { BranchMngService } from '../../../services/branch-mng.service';
+import { BranchMaster } from '../../../../core/Models/BranchMaster';
+import { DepartmentMaster } from '../../../../core/Models/DepartmentMaster';
+import { DepartmentMngService } from '../../../services/department-mng.service';
+import { AuthService } from '../../../../shared/services/auth.service';
+import { UserTypeMaster } from '../../../../core/Models/UserTypeMaster';
 
 @Component({
   selector: 'app-user-mng',
@@ -13,20 +19,12 @@ import { CommonModule } from '@angular/common';
   styleUrl: './user-mng.component.css'
 })
 export class UserMngComponent {
-  UserTypes = [
-    {value:"1", text:"Admin"},
-    {value:"1", text:"HOD"}
-  ];
-
-  Branches = [
-    {value:"1", text:"New Delhi"}
-  ];
-
-  Departments = [
-    {value:"1", text:"AIR EXPORT"}
-  ];
 
   userListApiResult: ApiResult<UserMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
+  branchListApiResult: ApiResult<BranchMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
+  departmentListApiResult: ApiResult<DepartmentMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
+  userTypeMasterListApiResult: ApiResult<UserTypeMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
+
   userForm: FormGroup;
   imagePreviewUrl: string | ArrayBuffer | null = null;
   @ViewChild('userFileInput') userFileInput: ElementRef<HTMLInputElement> | undefined;
@@ -36,8 +34,14 @@ export class UserMngComponent {
 
   searchTerm: string = '';
   filteredUsers: UserMaster[] = [];
+  filteredBranches: BranchMaster[] = [];
+  filteredDepartments: DepartmentMaster[] = [];
+  filteredUserTypeMaster: UserTypeMaster[] = [];
 
   private userService = inject(UserMngService);
+  private branchService = inject(BranchMngService);
+  private departmentService = inject(DepartmentMngService);
+  private AuthService = inject(AuthService);
 
   constructor(private fb: FormBuilder) {
     this.userForm = this.fb.group({
@@ -64,6 +68,9 @@ export class UserMngComponent {
 
   ngOnInit(): void {
     this.loadUsers();
+    this.loadBranches();
+    this.loadDepartments();
+    this.loadUserTypeMaster();
   }
 
   private loadUsers(): void {
@@ -76,6 +83,48 @@ export class UserMngComponent {
         console.error('Error fetching Users', err);
         this.userListApiResult = { dataList: [], result: false, message: 'Error fetching Users' };
         this.filteredUsers = [];
+      }
+    });
+  }
+
+  private loadBranches(): void {
+    this.branchService.getBranches().subscribe({
+      next: (response: ApiResult<BranchMaster>) => {
+        this.branchListApiResult = response;
+        this.filteredBranches = response.dataList ?? [];
+      },
+      error: (err) => {
+        console.error('Error fetching categories', err);
+        this.branchListApiResult = { dataList: [], result: false, message: 'Error fetching categories' };
+        this.filteredBranches = [];
+      }
+    });
+  }
+
+  private loadUserTypeMaster(): void {
+    this.AuthService.GetAllUserType().subscribe({
+      next: (response: ApiResult<UserTypeMaster>) => {
+        this.userTypeMasterListApiResult = response;
+        this.filteredUserTypeMaster = response.dataList ?? [];
+      },
+      error: (err) => {
+        console.error('Error fetching userTypeMaster', err);
+        this.departmentListApiResult = { dataList: [], result: false, message: 'Error fetching userTypeMaster' };
+        this.filteredUserTypeMaster = [];
+      }
+    });
+  }
+
+  private loadDepartments(): void {
+    this.departmentService.getDepartments().subscribe({
+      next: (response: ApiResult<DepartmentMaster>) => {
+        this.departmentListApiResult = response;
+        this.filteredDepartments = response.dataList ?? [];
+      },
+      error: (err) => {
+        console.error('Error fetching Departments', err);
+        this.departmentListApiResult = { dataList: [], result: false, message: 'Error fetching Departments' };
+        this.filteredDepartments = [];
       }
     });
   }
@@ -129,7 +178,7 @@ export class UserMngComponent {
 
   resetForm(): void {
     this.userForm.reset();
-    this.selectedUser= null;
+    this.selectedUser = null;
     this.imagePreviewUrl = null;
   }
 
@@ -138,14 +187,14 @@ export class UserMngComponent {
       console.warn('Form is invalid');
       return;
     }
-  
+
     const formData = new FormData();
     this.appendFormData(formData);
-  
-    const saveOrUpdate$ = this.selectedUser?.id ? 
-      this.userService.updateUser(formData) : 
+
+    const saveOrUpdate$ = this.selectedUser?.id ?
+      this.userService.updateUser(formData) :
       this.userService.saveUser(formData);
-  
+
     saveOrUpdate$.subscribe({
       next: (response: ApiResult<UserMaster>) => {
         this.userSaveApiResult = response;
@@ -170,6 +219,12 @@ export class UserMngComponent {
     formData.append('usBranchId', this.userForm.get('usBranchId')?.value ?? '0');
     formData.append('usDepartmentId', this.userForm.get('usDepartmentId')?.value ?? '0');
     formData.append('usName', this.userForm.get('usName')?.value ?? '');
+   
+    const selectedTypeId = this.userForm.get('usTypeId')?.value;
+    const selectedType = this.filteredUserTypeMaster.find(type => type.id === selectedTypeId);
+    const usTypeName = selectedType ? selectedType.usTypeName : ''; // Ensure this is always a string
+    formData.append('usTypeName', usTypeName!);
+
     formData.append('usEmail', this.userForm.get('usEmail')?.value ?? '');
     formData.append('usMob', this.userForm.get('usMob')?.value ?? '');
     formData.append('usAddress', this.userForm.get('usAddress')?.value ?? '');
@@ -177,12 +232,13 @@ export class UserMngComponent {
     formData.append('createdBy', 'getSessionIN');
     formData.append('updated', new Date().toISOString());
     formData.append('updatedBy', 'getSessionUP');
+
     if (this.userFileInput?.nativeElement) {
       const file = this.userFileInput.nativeElement.files?.[0];
       if (file) {
         formData.append('file', file, file.name);
       } else {
-       // console.error('No file selected.');
+        // console.error('No file selected.');
       }
     }
   }

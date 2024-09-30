@@ -4,6 +4,8 @@ import { CategoryMaster } from '../../../../core/Models/CategoryMaster';
 import { ApiResult } from '../../../../core/DTOs/ApiResult';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { VendorMaster } from '../../../../core/Models/VendorMaster';
+import { VendorMngService } from '../../../services/vendor-mng.service';
 
 @Component({
   selector: 'app-category-mng',
@@ -15,6 +17,8 @@ import { CommonModule } from '@angular/common';
 export class CategoryMngComponent implements OnInit {
 
   catListApiResult: ApiResult<CategoryMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
+  vendorListApiResult: ApiResult<VendorMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
+  
   catForm: FormGroup;
   imagePreviewUrl: string | ArrayBuffer | null = null;
   @ViewChild('catFileInput') catFileInput: ElementRef<HTMLInputElement> | undefined;
@@ -24,14 +28,11 @@ export class CategoryMngComponent implements OnInit {
 
   searchTerm: string = '';
   filteredCategories: CategoryMaster[] = [];
+  filteredVendors: VendorMaster[] = [];
 
-  vendors = [
-    { value: '1', text: 'One' },
-    { value: '2', text: 'Two' },
-    { value: '3', text: 'Three' }
-  ];
 
   private categoryService = inject(CategoryMngService);
+  private vendorService = inject(VendorMngService);
 
   constructor(private fb: FormBuilder) {
     this.catForm = this.fb.group({
@@ -51,6 +52,7 @@ export class CategoryMngComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCategories();
+    this.loadVendors();
   }
 
   
@@ -65,6 +67,20 @@ export class CategoryMngComponent implements OnInit {
         console.error('Error fetching categories', err);
         this.catListApiResult = { dataList: [], result: false, message: 'Error fetching categories' };
         this.filteredCategories = [];
+      }
+    });
+  }
+
+  private loadVendors(): void {
+    this.vendorService.getVendors().subscribe({
+      next: (response: ApiResult<VendorMaster>) => {
+        this.vendorListApiResult = response;
+        this.filteredVendors = response.dataList ?? [];
+      },
+      error: (err) => {
+        console.error('Error fetching vendors', err);
+        this.vendorListApiResult = { dataList: [], result: false, message: 'Error fetching vendors' };
+        this.filteredVendors = [];
       }
     });
   }

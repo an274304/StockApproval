@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { ApiResult } from '../../../../core/DTOs/ApiResult';
 import { ProductMaster } from '../../../../core/Models/ProductMaster';
 import { ProductMngService } from '../../../services/product-mng.service';
+import { CategoryMaster } from '../../../../core/Models/CategoryMaster';
+import { CategoryMngService } from '../../../services/category-mng.service';
 
 @Component({
   selector: 'app-product-mng',
@@ -13,7 +15,9 @@ import { ProductMngService } from '../../../services/product-mng.service';
   styleUrl: './product-mng.component.css'
 })
 export class ProductMngComponent {
+  catListApiResult: ApiResult<CategoryMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
   productListApiResult: ApiResult<ProductMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
+
   productForm: FormGroup;
   imagePreviewUrl: string | ArrayBuffer | null = null;
   @ViewChild('productFileInput') productFileInput: ElementRef<HTMLInputElement> | undefined;
@@ -23,12 +27,14 @@ export class ProductMngComponent {
 
   searchTerm: string = '';
   filteredProducts: ProductMaster[] = [];
+  filteredCategories: CategoryMaster[] = [];
 
   Categories = [
     {value:"1", text:"Laptop"}
   ];
 
   private productService = inject(ProductMngService);
+  private categoryService = inject(CategoryMngService);
 
   constructor(private fb: FormBuilder) {
     this.productForm = this.fb.group({
@@ -51,6 +57,21 @@ export class ProductMngComponent {
 
   ngOnInit(): void {
     this.loadProductes();
+    this.loadCategories();
+  }
+
+  private loadCategories(): void {
+    this.categoryService.getCategories().subscribe({
+      next: (response: ApiResult<CategoryMaster>) => {
+        this.catListApiResult = response;
+        this.filteredCategories = response.dataList ?? [];
+      },
+      error: (err) => {
+        console.error('Error fetching categories', err);
+        this.catListApiResult = { dataList: [], result: false, message: 'Error fetching categories' };
+        this.filteredCategories = [];
+      }
+    });
   }
 
   private loadProductes(): void {

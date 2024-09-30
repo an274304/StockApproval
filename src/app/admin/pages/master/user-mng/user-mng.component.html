@@ -19,30 +19,32 @@
         <div class="row">
             <div class="col-12 col-lg-3 d-flex align-items-stretch">
                 <div class="card w-100 rounded-4">
-                  <div class="card-body">
-                   <div class="d-flex align-items-start justify-content-between mb-3">
-                      <div class="">
-                        <h5 class="mb-0">Users</h5>
-                      </div>
-                    </div>
-                    <div class="order-search position-relative my-3">
-                      <input  [(ngModel)]="searchTerm"   (ngModelChange)="onSearchChange()" class="form-control rounded-5 px-5" type="text" placeholder="Search">
-                      <span class="material-icons-outlined position-absolute ms-3 translate-middle-y start-0 top-50">search</span>
-                    </div>
-                     <div class="table-responsive user-list">
-                         <table class="table align-middle">
-                            <tbody>
-                                @for(item of filteredUsers; track $index) {
+                    <div class="card-body">
+                        <div class="d-flex align-items-start justify-content-between mb-3">
+                            <div class="">
+                                <h5 class="mb-0">Users</h5>
+                            </div>
+                        </div>
+                        <div class="order-search position-relative my-3">
+                            <input [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+                                class="form-control rounded-5 px-5" type="text" placeholder="Search">
+                            <span
+                                class="material-icons-outlined position-absolute ms-3 translate-middle-y start-0 top-50">search</span>
+                        </div>
+                        <div class="table-responsive user-list">
+                            <table class="table align-middle">
+                                <tbody>
+                                    @for(item of filteredUsers; track $index) {
                                     <tr (click)="onSelectUser(item)">
                                         <td>{{item.usName}}</td>
-                                      </tr>
-                                }
-                            </tbody>
-                         </table>
-                     </div>
-                  </div>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-              </div>
+            </div>
             <div class="col-12 col-lg-9">
                 <div class="card border-top border-3 border-danger rounded-0">
                     <div class="card-header py-3 px-4">
@@ -53,53 +55,65 @@
                             <div class="col-md-4">
                                 <label class="form-label">User Type</label>
                                 <select formControlName="usTypeId" class="form-select rounded-0">
-                                    <option value="" disabled>Choose...</option>
-                                    <option *ngFor="let type of UserTypes" [value]="type.value">{{ type.text }}</option>
-                                  </select>
-                            </div>
+                                    <option value="0" selected disabled>Choose...</option>
+                                    <option *ngFor="let type of filteredUserTypeMaster" [value]="type.id">{{ type.usTypeName }}</option>
+                                </select>
+                            </div> 
                             <div class="col-md-4">
                                 <label class="form-label">User Branch</label>
                                 <select formControlName="usBranchId" class="form-select rounded-0">
-                                    <option value="" disabled>Choose...</option>
-                                    <option *ngFor="let branch of Branches" [value]="branch.value">{{ branch.text }}</option>
-                                  </select>
+                                    <option value="0" selected disabled>Choose...</option>
+                                    <option *ngFor="let branch of filteredBranches" [value]="branch.id">{{
+                                        branch.branchName }}</option>
+                                </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">User Department</label>
                                 <select formControlName="usDepartmentId" class="form-select rounded-0">
-                                    <option value="" disabled>Choose...</option>
-                                    <option *ngFor="let department of Departments" [value]="department.value">{{ department.text }}</option>
-                                  </select>
+                                    <option value="0" selected disabled>Choose...</option>
+                                    <option *ngFor="let department of filteredDepartments" [value]="department.id">{{
+                                        department.depName }}</option>
+                                </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">User Name</label>
-                                <input type="text" formControlName="usName" class="form-control rounded-0" placeholder="User Name">
+                                <input type="text" formControlName="usName" class="form-control rounded-0"
+                                    placeholder="User Name">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">User Email</label>
-                                <input type="text" formControlName="usEmail" class="form-control rounded-0" placeholder="User Email">
+                                <input type="text" formControlName="usEmail" class="form-control rounded-0"
+                                    placeholder="User Email">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">User Mobile</label>
-                                <input type="text" formControlName="usMob" class="form-control rounded-0" placeholder="User Mobile">
+                                <input type="text" formControlName="usMob" class="form-control rounded-0"
+                                    placeholder="User Mobile">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">User Address</label>
-                                <textarea formControlName="usAddress" class="form-control rounded-0" placeholder="User Mobile">
+                                <textarea formControlName="usAddress" class="form-control rounded-0"
+                                    placeholder="User Address">
                                 </textarea>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">User Image</label>
-                                <input type="file" formControlName="usImg"  (change)="onFileChange($event)" #userFileInput class="form-control rounded-0">
+                                <input type="file" formControlName="usImg" (change)="onFileChange($event)"
+                                    #userFileInput class="form-control rounded-0">
                             </div>
                             <div class="col-md-4">
-                                <img *ngIf="imagePreviewUrl" [src]="imagePreviewUrl" alt="Image Preview"  class="img-thumbnail"/>
+                                <img *ngIf="imagePreviewUrl" [src]="imagePreviewUrl" alt="Image Preview"
+                                    class="img-thumbnail" />
                             </div>
                             <div class="col-md-12">
                                 <div class="d-md-flex d-grid align-items-center gap-3">
-                                    <button type="button" (click)="submitForm()" class="btn btn-outline-success flex-fill"><i class="bi bi-box-arrow-up me-2"></i>Submit</button>
-                                    <button type="button" (click)="resetForm()" class="btn btn-outline-danger flex-fill"><i class="bi bi-x-circle me-2"></i>Reset</button>
-                                    
+                                    <button type="button" (click)="submitForm()"
+                                        class="btn btn-outline-success flex-fill"><i
+                                            class="bi bi-box-arrow-up me-2"></i>Submit</button>
+                                    <button type="button" (click)="resetForm()"
+                                        class="btn btn-outline-danger flex-fill"><i
+                                            class="bi bi-x-circle me-2"></i>Reset</button>
+
                                 </div>
                             </div>
                         </form>

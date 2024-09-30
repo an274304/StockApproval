@@ -3,6 +3,7 @@ import { LogInComponent } from './shared/components/log-in/log-in.component';
 import { AppComponent } from './app.component';
 import { AuthGaurd } from './core/Guards/auth.guard';
 import { AdminLayoutComponent } from './admin/components/admin-layout/admin-layout.component';
+import { DirectorLayoutComponent } from './director/components/director-layout/director-layout.component';
 
 export const routes: Routes = [
 
@@ -11,6 +12,12 @@ export const routes: Routes = [
     component : AdminLayoutComponent,
     canActivate: [AuthGaurd],
     loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) 
+  },
+  { 
+    path: 'director', 
+    component : DirectorLayoutComponent,
+    canActivate: [AuthGaurd],
+    loadChildren: () => import('./director/director.module').then(m => m.DirectorModule) 
   },
   { path: 'login', component: LogInComponent }, 
   { path: 'app', component: AppComponent },

@@ -53,8 +53,8 @@
                             <div class="col-md-3">
                                 <label class="form-label">Category Name</label>
                                 <select formControlName="catId" class="form-select rounded-0">
-                                    <option value="" disabled>Choose...</option>
-                                    <option *ngFor="let category of Categories" [value]="category.value">{{ category.text }}</option>
+                                    <option value="0" selected disabled>Choose...</option>
+                                    <option *ngFor="let category of filteredCategories" [value]="category.id">{{ category.catName }}</option>
                                   </select>
                             </div>
                             <div class="col-md-3">

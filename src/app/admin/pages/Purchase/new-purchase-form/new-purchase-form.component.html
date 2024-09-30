@@ -74,9 +74,9 @@
                                             <select [(ngModel)]="catId" name="catId" (change)="onCategoryChange($event)"
                                                 class="form-select rounded-0" required>
                                                 <option value="0" disabled selected>Select Category</option>
-                                                <option value="1">Laptop</option>
-                                                <option value="2">Desktop</option>
-                                                <option value="3">Tablet</option>
+                                                <option *ngFor="let category of filteredCategories" [value]="category.id">
+                                                    {{ category.catName }}
+                                                  </option>
                                             </select>
                                             <div *ngIf="catId === 0 || !catId" class="text-danger">
                                                 Category is required.
@@ -88,9 +88,9 @@
                                             <select [(ngModel)]="proId" name="proId" (change)="onProductChange($event)"
                                                 class="form-select rounded-0" required>
                                                 <option value="0" disabled selected>Select Product</option>
-                                                <option value="1">Dell</option>
-                                                <option value="2">HP</option>
-                                                <option value="3">Lenovo</option>
+                                                <option *ngFor="let product of filteredProducts" [value]="product.id">
+                                                    {{ product.proName }}
+                                                  </option>
                                             </select>
                                             <div *ngIf="proId === 0 || !proId" class="text-danger">
                                                 Product is required.
@@ -102,9 +102,9 @@
                                             <select [(ngModel)]="venId" name="venId" (change)="onVendorChange($event)"
                                                 class="form-select rounded-0" required>
                                                 <option value="0" disabled selected>Select Vendor</option>
-                                                <option value="1">Solitaire</option>
-                                                <option value="2">Ingram Micro</option>
-                                                <option value="3">Tech Data</option>
+                                                <option *ngFor="let vendor of filteredVendors" [value]="vendor.id">
+                                                    {{ vendor.venName }}
+                                                  </option>
                                             </select>
                                             <div *ngIf="venId === 0 || !venId" class="text-danger">
                                                 Vendor is required.

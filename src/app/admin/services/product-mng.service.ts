@@ -12,7 +12,6 @@ export class ProductMngService {
   http = inject(HttpClient);
   constructor() { }
   getProducts(): Observable<ApiResult<ProductMaster>> {
-    debugger;
     return this.http.get<ApiResult<ProductMaster>>(`${ApiUrl.baseApiUrl}${ApiUrl.product.GET_ALL_PRODUCT}`);
   }
 

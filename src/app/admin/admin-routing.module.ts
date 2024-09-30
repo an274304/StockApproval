@@ -18,7 +18,6 @@ import { NewStockFormComponent } from './pages/stock/new-stock-form/new-stock-fo
 import { AssignItemComponent } from './pages/stock/assign-item/assign-item.component';
 import { DisposeItemComponent } from './pages/stock/dispose-item/dispose-item.component';
 import { AvailableItemComponent } from './pages/stock/available-item/available-item.component';
-import { AdminLayoutComponent } from './components/admin-layout/admin-layout.component';
 
 const routes: Routes = [
   { 
@@ -94,7 +93,7 @@ const routes: Routes = [
     component:DisposeItemComponent
   },
   {
-    path:"availabe",
+    path:"available",
     component:AvailableItemComponent
   }
 ];

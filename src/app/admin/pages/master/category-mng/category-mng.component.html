@@ -65,8 +65,8 @@
                             <div class="col-md-6">
                               <label class="form-label">Vendor</label>
                               <select formControlName="catVendorId" class="form-select rounded-0">
-                                <option value="" disabled>Choose...</option>
-                                <option *ngFor="let vendor of vendors" [value]="vendor.value">{{ vendor.text }}</option>
+                                <option value="0" selected disabled>Choose Vendor</option>
+                                <option *ngFor="let vendor of filteredVendors" [value]="vendor.id">{{ vendor.venName }}</option>
                               </select>
                             </div>
                             <div class="col-md-6">

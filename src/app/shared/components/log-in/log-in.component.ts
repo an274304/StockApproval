@@ -53,11 +53,11 @@ export class LogInComponent implements OnInit, AfterViewInit {
   redirectBasedOnRole(): void {
     const userRole = this.globalState.getUserRole();
 
-    if (userRole === 'admin') {
+    if (userRole === 'Admin') {
       this.router.navigate(['/admin']);
-    } else if (userRole === 'director') {
+    } else if (userRole === 'Director') {
       this.router.navigate(['/director']);
-    } else if (userRole === 'account') {
+    } else if (userRole === 'Account') {
       this.router.navigate(['/accounts']);
     }
   }

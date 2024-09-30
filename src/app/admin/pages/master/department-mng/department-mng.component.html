@@ -53,8 +53,8 @@
                             <div class="col-md-4">
                                 <label class="form-label">Branch Name</label>
                                 <select formControlName="branchId" class="form-select rounded-0">
-                                    <option value="" disabled>Choose...</option>
-                                    <option *ngFor="let branch of Branches" [value]="branch.value">{{ branch.text }}</option>
+                                    <option value="0" selected disabled>Choose...</option>
+                                    <option *ngFor="let branch of filteredBranches" [value]="branch.id">{{ branch.branchName }}</option>
                                   </select>
                             </div>
                             <div class="col-md-4">

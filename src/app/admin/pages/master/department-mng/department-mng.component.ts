@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { DepartmentMaster } from '../../../../core/Models/DepartmentMaster';
 import { ApiResult } from '../../../../core/DTOs/ApiResult';
 import { DepartmentMngService } from '../../../services/department-mng.service';
+import { BranchMngService } from '../../../services/branch-mng.service';
+import { BranchMaster } from '../../../../core/Models/BranchMaster';
 
 @Component({
   selector: 'app-department-mng',
@@ -14,6 +16,8 @@ import { DepartmentMngService } from '../../../services/department-mng.service';
 })
 export class DepartmentMngComponent implements OnInit {
   departmentListApiResult: ApiResult<DepartmentMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
+  branchListApiResult: ApiResult<BranchMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
+
   departmentForm: FormGroup;
   imagePreviewUrl: string | ArrayBuffer | null = null;
   @ViewChild('departmentFileInput') departmentFileInput: ElementRef<HTMLInputElement> | undefined;
@@ -23,12 +27,11 @@ export class DepartmentMngComponent implements OnInit {
 
   searchTerm: string = '';
   filteredDepartments: DepartmentMaster[] = [];
+  filteredBranches: BranchMaster[] = [];
 
-  Branches = [
-    {value:"1", text:"New Delhi"}
-  ];
 
   private departmentService = inject(DepartmentMngService);
+  private branchService = inject(BranchMngService);
 
   constructor(private fb: FormBuilder) {
     this.departmentForm = this.fb.group({
@@ -48,6 +51,7 @@ export class DepartmentMngComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDepartments();
+    this.loadBranches();
   }
 
   private loadDepartments(): void {
@@ -60,6 +64,20 @@ export class DepartmentMngComponent implements OnInit {
         console.error('Error fetching Departments', err);
         this.departmentListApiResult = { dataList: [], result: false, message: 'Error fetching Departments' };
         this.filteredDepartments = [];
+      }
+    });
+  }
+
+  private loadBranches(): void {
+    this.branchService.getBranches().subscribe({
+      next: (response: ApiResult<BranchMaster>) => {
+        this.branchListApiResult = response;
+        this.filteredBranches = response.dataList ?? [];
+      },
+      error: (err) => {
+        console.error('Error fetching categories', err);
+        this.branchListApiResult = { dataList: [], result: false, message: 'Error fetching categories' };
+        this.filteredBranches = [];
       }
     });
   }
@@ -113,7 +131,7 @@ export class DepartmentMngComponent implements OnInit {
 
   resetForm(): void {
     this.departmentForm.reset();
-    this.selectedDepartment= null;
+    this.selectedDepartment = null;
     this.imagePreviewUrl = null;
   }
 
@@ -122,14 +140,14 @@ export class DepartmentMngComponent implements OnInit {
       console.warn('Form is invalid');
       return;
     }
-  
+
     const formData = new FormData();
     this.appendFormData(formData);
-  
-    const saveOrUpdate$ = this.selectedDepartment?.id ? 
-      this.departmentService.updateDepartment(formData) : 
+
+    const saveOrUpdate$ = this.selectedDepartment?.id ?
+      this.departmentService.updateDepartment(formData) :
       this.departmentService.saveDepartment(formData);
-  
+
     saveOrUpdate$.subscribe({
       next: (response: ApiResult<DepartmentMaster>) => {
         this.departmentSaveApiResult = response;
@@ -163,7 +181,7 @@ export class DepartmentMngComponent implements OnInit {
       if (file) {
         formData.append('file', file, file.name);
       } else {
-       // console.error('No file selected.');
+        // console.error('No file selected.');
       }
     }
   }

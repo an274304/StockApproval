@@ -14,7 +14,6 @@ import { AuthService } from './shared/services/auth.service';
 })
 export class AppComponent implements OnInit, AfterViewInit {
   title = 'Stock Approval';
-  userRole: string | null = null;
 
   constructor(private globalState: GlobalStateService, private router: Router, private authService : AuthService) {
     
@@ -45,11 +44,5 @@ export class AppComponent implements OnInit, AfterViewInit {
     } else if (userRole === 'account') {
       this.router.navigate(['/accounts']);
     }
-  }
-
-  logOut(): void {
-    this.userRole = null;
-    this.globalState.clear();  
-    this.router.navigate(['/login']);  
   }
 }

@@ -1,9 +1,11 @@
 
 export const ApiUrl = {
-    baseApiUrl: 'https://localhost:7071/api/',
+     baseApiUrl: 'https://stockApi.committedcargo.net/api/',
+   // baseApiUrl: 'https://localhost:7071/api/',
 
     auth : {
-        AUTH : 'v1/Auth/LogIn'
+        AUTH : 'v1/Auth/LogIn',
+        GET_ALL_USER_TYPE : 'v1/Auth/GetAllUserType'
     },
 
     category : {
@@ -64,6 +66,9 @@ export const ApiUrl = {
 
     purchase : {
         PURCHASE_ORDER : 'v1/Purchase/PurchaseOrder',
+        Items_Approve_By_Director : 'v1/Purchase/ItemsApproveByDirector?purchaseOrderNo=',
+        Items_Reject_By_Director : 'v1/Purchase/ItemsRejectByDirector?purchaseOrderNo=',
+        Remove_Item_By_Director : 'v1/Purchase/RemoveItemByDirector?purchaseItemId=',
         ITEMS_SEND_TO_VENDOR : 'v1/Purchase/ItemsSendToVendor?purchaseOrderNo=',
         Get_Received_Items_For_Update : 'v1/Purchase/GetReceivedItemsForUpdate?purchaseOrderNo=',
         Bill_Send_TO_Accts_And_Stock : 'v1/Purchase/BillSendTOAcctsAndStock'
@@ -82,5 +87,15 @@ export const ApiUrl = {
         Get_New_Stock_Items_At_Admin : 'v1/Stock/GetNewStockItemsAtAdmin?purchaseOrderNo=',
         Update_New_Stock_Item : 'v1/Stock/UpdateNewStockItem',
         Load_Updated_Stock_Master_Items : 'v1/Stock/loadUpdatedStockMasterItems?purchaseOrderNo='
+    },
+
+    vendorBill : {
+        Get_Pending_Items_For_Approval_At_Director : 'v1/VendorBill/GetPendingItemsForApprovalAtDirector?purchaseOrderNo='
+    },
+
+    vendorBillTable : {
+        Get_Pending_Bill_At_Director : 'v1/VendorBillTable/GetPendingBillAtDirector',
+        Get_Approved_Bill_At_Director : 'v1/VendorBillTable/GetApprovedBillAtDirector',
+        Get_Rejected_Bill_At_Director : 'v1/VendorBillTable/GetRejectedBillAtDirector'
     }
   };
