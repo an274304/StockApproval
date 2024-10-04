@@ -53,15 +53,30 @@
                             <div class="col-md-6">
                                 <label class="form-label">Branch Name</label>
                                 <input type="text" formControlName="branchName" class="form-control rounded-0" placeholder="Branch Name">
-                            </div>
-                            <div class="col-md-3">
+                                <div *ngIf="branchForm.get('branchName')?.invalid && branchForm.get('branchName')?.touched" class="text-danger">
+                                  <small *ngIf="branchForm.get('branchName')?.errors?.['required']">Branch Name is required.</small>
+                                  <small *ngIf="branchForm.get('branchName')?.errors?.['maxLength']">Branch Name cannot exceed 100 characters.</small>
+                                </div>
+                              </div>
+                              
+                              <div class="col-md-3">
                                 <label class="form-label">Branch Code</label>
                                 <input type="text" formControlName="branchCode" class="form-control rounded-0" placeholder="Branch Code">
-                            </div>
-                            <div class="col-md-3">
+                                <div *ngIf="branchForm.get('branchCode')?.invalid && branchForm.get('branchCode')?.touched" class="text-danger">
+                                  <small *ngIf="branchForm.get('branchCode')?.errors?.['required']">Branch Code is required.</small>
+                                  <small *ngIf="branchForm.get('branchCode')?.errors?.['maxLength']">Branch Code cannot exceed 10 characters.</small>
+                                </div>
+                              </div>
+                              
+                              <div class="col-md-3">
                                 <label class="form-label">Branch Prefix</label>
                                 <input type="text" formControlName="branchPrefix" class="form-control rounded-0" placeholder="Branch Prefix">
-                            </div>
+                                <div *ngIf="branchForm.get('branchPrefix')?.invalid && branchForm.get('branchPrefix')?.touched" class="text-danger">
+                                  <small *ngIf="branchForm.get('branchPrefix')?.errors?.['required']">Branch Prefix is required.</small>
+                                  <small *ngIf="branchForm.get('branchPrefix')?.errors?.['maxLength']">Branch Prefix cannot exceed 5 characters.</small>
+                                </div>
+                              </div>
+                              
                             <div class="col-md-6">
                                 <label class="form-label">Branch Image</label>
                                 <input type="file" formControlName="branchImg"  (change)="onFileChange($event)" #branchFileInput class="form-control rounded-0">

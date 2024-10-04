@@ -55,46 +55,76 @@
                             <div class="col-md-4">
                                 <label class="form-label">User Type</label>
                                 <select formControlName="usTypeId" class="form-select rounded-0">
-                                    <option value="0" selected disabled>Choose...</option>
                                     <option *ngFor="let type of filteredUserTypeMaster" [value]="type.id">{{ type.usTypeName }}</option>
                                 </select>
+                                <div *ngIf="userForm.get('usTypeId')?.invalid && (userForm.get('usTypeId')?.touched || userForm.get('usTypeId')?.dirty)" class="text-danger">
+                                    <small *ngIf="userForm.get('usTypeId')?.errors?.['required']">User Type is required.</small>
+                                </div>
                             </div> 
                             <div class="col-md-4">
                                 <label class="form-label">User Branch</label>
                                 <select formControlName="usBranchId" class="form-select rounded-0">
-                                    <option value="0" selected disabled>Choose...</option>
                                     <option *ngFor="let branch of filteredBranches" [value]="branch.id">{{
                                         branch.branchName }}</option>
                                 </select>
+                                <div *ngIf="userForm.get('usBranchId')?.invalid && (userForm.get('usBranchId')?.touched || userForm.get('usBranchId')?.dirty)" class="text-danger">
+                                    <small *ngIf="userForm.get('usBranchId')?.errors?.['required']">User Branch is required.</small>
+                                </div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">User Department</label>
                                 <select formControlName="usDepartmentId" class="form-select rounded-0">
-                                    <option value="0" selected disabled>Choose...</option>
                                     <option *ngFor="let department of filteredDepartments" [value]="department.id">{{
                                         department.depName }}</option>
                                 </select>
+                                <div *ngIf="userForm.get('usDepartmentId')?.invalid && (userForm.get('usDepartmentId')?.touched || userForm.get('usDepartmentId')?.dirty)" class="text-danger">
+                                    <small *ngIf="userForm.get('usDepartmentId')?.errors?.['required']">User Department is required.</small>
+                                </div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">User Name</label>
                                 <input type="text" formControlName="usName" class="form-control rounded-0"
                                     placeholder="User Name">
+                                    <div *ngIf="userForm.get('usName')?.invalid && (userForm.get('usName')?.touched || userForm.get('usName')?.dirty)" class="text-danger">
+                                        <small *ngIf="userForm.get('usName')?.errors?.['required']">User Name is required.</small>
+                                        <small *ngIf="userForm.get('usName')?.errors?.['minlength']">User Name must be at least 3 characters long.</small>
+                                    </div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">User Email</label>
                                 <input type="text" formControlName="usEmail" class="form-control rounded-0"
                                     placeholder="User Email">
+                                    <div *ngIf="userForm.get('usEmail')?.invalid && (userForm.get('usEmail')?.touched || userForm.get('usEmail')?.dirty)" class="text-danger">
+                                        <small *ngIf="userForm.get('usEmail')?.errors?.['required']">Email is required.</small>
+                                        <small *ngIf="userForm.get('usEmail')?.errors?.['email']">Please enter a valid email address.</small>
+                                    </div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">User Mobile</label>
                                 <input type="text" formControlName="usMob" class="form-control rounded-0"
                                     placeholder="User Mobile">
+                                    <div *ngIf="userForm.get('usMob')?.invalid && (userForm.get('usMob')?.touched || userForm.get('usMob')?.dirty)" class="text-danger">
+                                        <small *ngIf="userForm.get('usMob')?.errors?.['required']">Mobile number is required.</small>
+                                        <small *ngIf="userForm.get('usMob')?.errors?.['pattern']">Please enter a valid 10-digit mobile number.</small>
+                                    </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">User Password</label>
+                                <input type="text" formControlName="usPassword" class="form-control rounded-0"
+                                    placeholder="User Password">
+                                    <div *ngIf="userForm.get('usPassword')?.invalid && (userForm.get('usPassword')?.touched || userForm.get('usPassword')?.dirty)" class="text-danger">
+                                        <small *ngIf="userForm.get('usPassword')?.errors?.['required']">Password is required.</small>
+                                        <small *ngIf="userForm.get('usPassword')?.errors?.['minlength']">Password must be at least 6 characters long.</small>
+                                    </div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">User Address</label>
                                 <textarea formControlName="usAddress" class="form-control rounded-0"
                                     placeholder="User Address">
                                 </textarea>
+                                <div *ngIf="userForm.get('usAddress')?.invalid && (userForm.get('usAddress')?.touched || userForm.get('usAddress')?.dirty)" class="text-danger">
+                                    <small *ngIf="userForm.get('usAddress')?.errors?.['required']">Address is required.</small>
+                                </div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">User Image</label>

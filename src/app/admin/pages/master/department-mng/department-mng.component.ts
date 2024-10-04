@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DepartmentMaster } from '../../../../core/Models/DepartmentMaster';
 import { ApiResult } from '../../../../core/DTOs/ApiResult';
 import { DepartmentMngService } from '../../../services/department-mng.service';
@@ -36,16 +36,16 @@ export class DepartmentMngComponent implements OnInit {
   constructor(private fb: FormBuilder) {
     this.departmentForm = this.fb.group({
       id: [0],
-      branchId: [0],  // Added branchId field
-      depName: [''],
-      depCode: [''],
-      depPrefix: [''],
-      depImg: [null],
-      status: [false],
-      created: [null],
-      createdBy: [''],
-      updated: [null],
-      updatedBy: ['']
+    branchId: [null, Validators.required],  // Added required validation
+    depName: ['', Validators.required],    // Added required validation
+    depCode: ['', Validators.required],    // Added required validation
+    depPrefix: ['', Validators.required],   // Added required validation
+    depImg: [null],
+    status: [false],
+    created: [null],
+    createdBy: [''],
+    updated: [null],
+    updatedBy: ['']
     });
   }
 
@@ -131,15 +131,18 @@ export class DepartmentMngComponent implements OnInit {
 
   resetForm(): void {
     this.departmentForm.reset();
+    this.departmentForm.markAsPristine();
     this.selectedDepartment = null;
     this.imagePreviewUrl = null;
   }
 
   submitForm(): void {
     if (this.departmentForm.invalid) {
+      // Show validation messages
+      this.departmentForm.markAllAsTouched(); // This will mark all fields as touched to show errors
       console.warn('Form is invalid');
       return;
-    }
+  }
 
     const formData = new FormData();
     this.appendFormData(formData);

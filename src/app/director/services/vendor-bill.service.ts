@@ -14,7 +14,7 @@ export class VendorBillService {
   constructor() { }
 
   GetPendingItemsForApproval(purchaseOrderNo: string): Observable<ApiResult<PurchaseOrderWitItems>> {
-    return this.http.get<ApiResult<PurchaseOrderWitItems>>(`${ApiUrl.baseApiUrl}${ApiUrl.vendorBill.Get_Pending_Items_For_Approval_At_Director}${purchaseOrderNo}`);
+    return this.http.get<ApiResult<PurchaseOrderWitItems>>(`${ApiUrl.baseApiUrl}${ApiUrl.vendorBill_Director.Get_Pending_Items_For_Approval_At_Director}${purchaseOrderNo}`);
   }
 
   RejectPendingItemsForApproval(purchaseOrderNo: string): Observable<ApiResult<object>> {

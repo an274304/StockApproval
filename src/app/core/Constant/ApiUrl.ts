@@ -1,7 +1,7 @@
 
 export const ApiUrl = {
      baseApiUrl: 'https://stockApi.committedcargo.net/api/',
-   // baseApiUrl: 'https://localhost:7071/api/',
+  //  baseApiUrl: 'https://localhost:7071/api/',
 
     auth : {
         AUTH : 'v1/Auth/LogIn',
@@ -71,7 +71,8 @@ export const ApiUrl = {
         Remove_Item_By_Director : 'v1/Purchase/RemoveItemByDirector?purchaseItemId=',
         ITEMS_SEND_TO_VENDOR : 'v1/Purchase/ItemsSendToVendor?purchaseOrderNo=',
         Get_Received_Items_For_Update : 'v1/Purchase/GetReceivedItemsForUpdate?purchaseOrderNo=',
-        Bill_Send_TO_Accts_And_Stock : 'v1/Purchase/BillSendTOAcctsAndStock'
+        Bill_Send_TO_Accts_And_Stock : 'v1/Purchase/BillSendTOAcctsAndStock',
+        Upload_Payed_Receipt_For_Bill : 'v1/Purchase/UploadPayedReceiptForBill'
     },
 
     purchaseTable : {
@@ -84,18 +85,28 @@ export const ApiUrl = {
 
     stock : {
         Get_New_Stock_At_Admin : 'v1/Stock/GetNewStockAtAdmin',
+        Get_Available_Stock_At_Admin : 'v1/Stock/GetAvailableStockAtAdmin',
         Get_New_Stock_Items_At_Admin : 'v1/Stock/GetNewStockItemsAtAdmin?purchaseOrderNo=',
         Update_New_Stock_Item : 'v1/Stock/UpdateNewStockItem',
         Load_Updated_Stock_Master_Items : 'v1/Stock/loadUpdatedStockMasterItems?purchaseOrderNo='
     },
 
-    vendorBill : {
+    vendorBill_Director : {
         Get_Pending_Items_For_Approval_At_Director : 'v1/VendorBill/GetPendingItemsForApprovalAtDirector?purchaseOrderNo='
     },
 
-    vendorBillTable : {
+    vendorBillTable_Director : {
         Get_Pending_Bill_At_Director : 'v1/VendorBillTable/GetPendingBillAtDirector',
         Get_Approved_Bill_At_Director : 'v1/VendorBillTable/GetApprovedBillAtDirector',
         Get_Rejected_Bill_At_Director : 'v1/VendorBillTable/GetRejectedBillAtDirector'
+    },
+
+    vendorBill_Account : {
+        Get_View_Pending_Bill_At_Account : 'v1/VendorBillAccount/GetViewPendingBillAtAccount?purchaseOrderNo='
+    },
+
+    vendorBillTable_Account : {
+        Get_Pending_Bill_At_Account : 'v1/VendorBillTableAccount/GetPendingBillAtAccount',
+        Get_Payed_Bill_At_Account : 'v1/VendorBillTable/GetPayedBillAtAccount'
     }
   };

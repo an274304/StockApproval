@@ -95,7 +95,8 @@
                                             <td style="text-align: center;">{{ item.itemRate }}</td>
                                             <td style="text-align: center;">{{ item.itemQty }}</td>
                                             <td style="text-align: center;">
-                                                <input type="date" [(ngModel)]="item.updated" name="expiryDate" class="form-control form-control-sm rounded-0"/>
+                                                <input type="date" [(ngModel)]="item.updated" name="expiryDate" required  class="form-control form-control-sm rounded-0"/>
+                                                <span *ngIf="!item.updated" class="text-danger">*</span> 
                                             </td>
                                         </tr>
                                     </tbody>

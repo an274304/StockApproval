@@ -15,14 +15,14 @@ export class VendorBillTableService {
   constructor() { }
 
   GetPendingBillAtDirector(): Observable<ApiResult<PurchaseOrder>> {
-    return this.http.get<ApiResult<PurchaseOrder>>(`${ApiUrl.baseApiUrl}${ApiUrl.vendorBillTable.Get_Pending_Bill_At_Director}`);
+    return this.http.get<ApiResult<PurchaseOrder>>(`${ApiUrl.baseApiUrl}${ApiUrl.vendorBillTable_Director.Get_Pending_Bill_At_Director}`);
   }
 
   GetApprovedBillAtDirector(): Observable<ApiResult<PurchaseOrder>> {
-    return this.http.get<ApiResult<PurchaseOrder>>(`${ApiUrl.baseApiUrl}${ApiUrl.vendorBillTable.Get_Approved_Bill_At_Director}`);
+    return this.http.get<ApiResult<PurchaseOrder>>(`${ApiUrl.baseApiUrl}${ApiUrl.vendorBillTable_Director.Get_Approved_Bill_At_Director}`);
   }
 
   GetRejectedBillAtDirector(): Observable<ApiResult<PurchaseOrder>> {
-    return this.http.get<ApiResult<PurchaseOrder>>(`${ApiUrl.baseApiUrl}${ApiUrl.vendorBillTable.Get_Rejected_Bill_At_Director}`);
+    return this.http.get<ApiResult<PurchaseOrder>>(`${ApiUrl.baseApiUrl}${ApiUrl.vendorBillTable_Director.Get_Rejected_Bill_At_Director}`);
   }
 }

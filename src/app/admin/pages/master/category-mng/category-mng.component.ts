@@ -2,7 +2,7 @@ import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core'
 import { CategoryMngService } from '../../../services/category-mng.service';
 import { CategoryMaster } from '../../../../core/Models/CategoryMaster';
 import { ApiResult } from '../../../../core/DTOs/ApiResult';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { VendorMaster } from '../../../../core/Models/VendorMaster';
 import { VendorMngService } from '../../../services/vendor-mng.service';
@@ -10,7 +10,7 @@ import { VendorMngService } from '../../../services/vendor-mng.service';
 @Component({
   selector: 'app-category-mng',
   standalone: true,
-  imports: [ReactiveFormsModule,CommonModule,FormsModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './category-mng.component.html',
   styleUrls: ['./category-mng.component.css']
 })
@@ -18,7 +18,7 @@ export class CategoryMngComponent implements OnInit {
 
   catListApiResult: ApiResult<CategoryMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
   vendorListApiResult: ApiResult<VendorMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
-  
+
   catForm: FormGroup;
   imagePreviewUrl: string | ArrayBuffer | null = null;
   @ViewChild('catFileInput') catFileInput: ElementRef<HTMLInputElement> | undefined;
@@ -37,10 +37,10 @@ export class CategoryMngComponent implements OnInit {
   constructor(private fb: FormBuilder) {
     this.catForm = this.fb.group({
       id: [0],
-      catVendorId: [0],
-      catName: [''],
-      catCode: [''],
-      catPrefix: [''],
+      catVendorId: [null, Validators.required],
+      catName: ['', [Validators.required, Validators.minLength(3)]],
+      catCode: ['', [Validators.required]], // Only alphanumeric codes allowed
+      catPrefix: ['', [Validators.required, Validators.maxLength(5)]],
       catImg: [null],
       status: [false],
       created: [null],
@@ -55,7 +55,7 @@ export class CategoryMngComponent implements OnInit {
     this.loadVendors();
   }
 
-  
+
 
   private loadCategories(): void {
     this.categoryService.getCategories().subscribe({
@@ -94,19 +94,19 @@ export class CategoryMngComponent implements OnInit {
       this.filteredCategories = this.catListApiResult.dataList ?? [];
     }
   }
-  
+
   onSelectCategory(category: CategoryMaster): void {
     this.categoryService.getCategoryById(category.id!).subscribe({
       next: (response: ApiResult<CategoryMaster>) => {
         if (response.result && response.data) {
           this.selectedCat = response.data;
-  
+
           // Set the image preview URL
           this.imagePreviewUrl = this.selectedCat.catImg ? this.selectedCat.catImg : null;
-  
+
           // Prepare form data without the file input field
           const { catImg, ...formData } = this.selectedCat;
-  
+
           // Patch the form with other fields
           this.catForm.patchValue(formData);
         }
@@ -116,41 +116,43 @@ export class CategoryMngComponent implements OnInit {
       }
     });
   }
-  
+
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length) {
       const file = input.files[0];
       const reader = new FileReader();
-  
+
       reader.onload = (e: ProgressEvent<FileReader>) => {
         this.imagePreviewUrl = e.target?.result as string | ArrayBuffer | null;
       };
-  
+
       reader.readAsDataURL(file);
     }
   }
-  
+
 
   resetForm(): void {
     this.catForm.reset();
+    this.catForm.markAsPristine();
     this.selectedCat = null;
     this.imagePreviewUrl = null;
   }
 
   submitForm(): void {
     if (this.catForm.invalid) {
+      this.catForm.markAllAsTouched(); // Mark all fields as touched to show errors
       console.warn('Form is invalid');
       return;
     }
-  
+
     const formData = new FormData();
     this.appendFormData(formData);
-  
-    const saveOrUpdate$ = this.selectedCat?.id ? 
-      this.categoryService.updateCategory(formData) : 
+
+    const saveOrUpdate$ = this.selectedCat?.id ?
+      this.categoryService.updateCategory(formData) :
       this.categoryService.saveCategory(formData);
-  
+
     saveOrUpdate$.subscribe({
       next: (response: ApiResult<CategoryMaster>) => {
         this.categorySaveApiResult = response;
@@ -158,7 +160,7 @@ export class CategoryMngComponent implements OnInit {
           alert(this.selectedCat ? 'Updated successfully' : 'Saved successfully');
           this.loadCategories();
           this.resetForm();
-          
+
         } else {
           alert('Failed to save');
         }
@@ -169,7 +171,7 @@ export class CategoryMngComponent implements OnInit {
       }
     });
   }
-  
+
   private appendFormData(formData: FormData): void {
     formData.append('id', this.selectedCat?.id?.toString() ?? '0');
     formData.append('catName', this.catForm.get('catName')?.value ?? '');

@@ -13,8 +13,16 @@ declare var $: any;
   styleUrl: './director-layout.component.css'
 })
 export class DirectorLayoutComponent {
+  username : string = '';
+  userImg : string = '';
+
   constructor(private globalState: GlobalStateService, private router: Router, private authService : AuthService) {
    
+  }
+
+  ngOnInit(): void {
+    this.username= this.globalState.getUserName() ?? '';
+    this.userImg= this.globalState.getUserImage() ?? '/assets/images/avatars/01.png';
   }
 
   logOut(): void {

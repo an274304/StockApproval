@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiResult } from '../../../../core/DTOs/ApiResult';
 import { VendorMaster } from '../../../../core/Models/VendorMaster';
 import { VendorMngService } from '../../../services/vendor-mng.service';
@@ -30,14 +30,14 @@ export class VendorMngComponent {
   constructor(private fb: FormBuilder) {
     this.vendorForm = this.fb.group({
       id: [0],
-      venName: [''],
+      venName: ['', Validators.required],
       venCode: [''],
-      venShopName: [''],
+      venShopName: ['', Validators.required],
       venImg: [null],
-      venAddress: [''],
-      venEmail: [''],
-      venMob: [''],
-      venGstin: [''],
+      venAddress: ['', Validators.required],
+      venEmail: ['', [Validators.required, Validators.email]],
+      venMob: ['', Validators.required, Validators.pattern('^[0-9]{10}$')],
+      venGstin: ['', Validators.required],
       status: [false],
       created: [null],
       createdBy: [''],
@@ -113,6 +113,7 @@ export class VendorMngComponent {
 
   resetForm(): void {
     this.vendorForm.reset();
+    this.vendorForm.markAsPristine();
     this.selectedVendor = null;
     this.imagePreviewUrl = null;
   }
@@ -120,6 +121,7 @@ export class VendorMngComponent {
   submitForm(): void {
     if (this.vendorForm.invalid) {
       console.warn('Form is invalid');
+      this.vendorForm.markAllAsTouched(); // Mark all fields as touched to show validation messages
       return;
     }
   

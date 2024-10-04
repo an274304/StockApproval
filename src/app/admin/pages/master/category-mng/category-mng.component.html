@@ -50,25 +50,41 @@
                     </div>
                     <div class="card-body p-4">
                         <form [formGroup]="catForm" class="row g-3">
-                            <div class="col-md-6">
-                              <label class="form-label">Category Name</label>
-                              <input type="text" formControlName="catName" class="form-control rounded-0" placeholder="Category Name">
+                          <div class="col-md-6">
+                            <label class="form-label">Category Name</label>
+                            <input type="text" formControlName="catName" class="form-control rounded-0" placeholder="Category Name">
+                            <div *ngIf="catForm.get('catName')?.invalid && catForm.get('catName')?.touched">
+                              <small class="text-danger" *ngIf="catForm.get('catName')?.errors?.['required']">Category Name is required.</small>
+                              <small class="text-danger" *ngIf="catForm.get('catName')?.errors?.['minlength']">Minimum 3 characters required.</small>
                             </div>
-                            <div class="col-md-3">
-                              <label class="form-label">Category Code</label>
-                              <input type="text" formControlName="catCode" class="form-control rounded-0" placeholder="Category Code">
+                          </div>
+                          
+                          <div class="col-md-3">
+                            <label class="form-label">Category Code</label>
+                            <input type="text" formControlName="catCode" class="form-control rounded-0" placeholder="Category Code">
+                            <div *ngIf="catForm.get('catCode')?.invalid && catForm.get('catCode')?.touched">
+                              <small class="text-danger" *ngIf="catForm.get('catCode')?.errors?.['required']">Category Code is required.</small>
                             </div>
-                            <div class="col-md-3">
-                              <label class="form-label">Category Prefix</label>
-                              <input type="text" formControlName="catPrefix" class="form-control rounded-0" placeholder="Category Prefix">
+                          </div>
+                          
+                          <div class="col-md-3">
+                            <label class="form-label">Category Prefix</label>
+                            <input type="text" formControlName="catPrefix" class="form-control rounded-0" placeholder="Category Prefix">
+                            <div *ngIf="catForm.get('catPrefix')?.invalid && catForm.get('catPrefix')?.touched">
+                              <small class="text-danger" *ngIf="catForm.get('catPrefix')?.errors?.['required']">Category Prefix is required.</small>
+                              <small class="text-danger" *ngIf="catForm.get('catPrefix')?.errors?.['maxlength']">Maximum 5 characters allowed.</small>
                             </div>
-                            <div class="col-md-6">
-                              <label class="form-label">Vendor</label>
-                              <select formControlName="catVendorId" class="form-select rounded-0">
-                                <option value="0" selected disabled>Choose Vendor</option>
-                                <option *ngFor="let vendor of filteredVendors" [value]="vendor.id">{{ vendor.venName }}</option>
-                              </select>
+                          </div>
+                          
+                          <div class="col-md-6">
+                            <label class="form-label">Vendor</label>
+                            <select formControlName="catVendorId" class="form-select rounded-0">
+                              <option *ngFor="let vendor of filteredVendors" [value]="vendor.id">{{ vendor.venName }}</option>
+                            </select>
+                            <div *ngIf="catForm.get('catVendorId')?.invalid && catForm.get('catVendorId')?.touched">
+                              <small class="text-danger">Please select a vendor.</small>
                             </div>
+                          </div>
                             <div class="col-md-6">
                               <label class="form-label">Category Image</label>
                               <input formControlName="catImg"  (change)="onFileChange($event)" #catFileInput type="file" class="form-control rounded-0" accept="image/*">

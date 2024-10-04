@@ -12,6 +12,8 @@ import { ProductMngService } from '../../../services/product-mng.service';
 import { ProductMaster } from '../../../../core/Models/ProductMaster';
 import { VendorMaster } from '../../../../core/Models/VendorMaster';
 import { VendorMngService } from '../../../services/vendor-mng.service';
+import { CurrencyMaster } from '../../../../core/Models/CurrencyMaster';
+import { CurrencyMngService } from '../../../services/currency-mng.service';
 
 @Component({
   selector: 'app-new-purchase-form',
@@ -24,7 +26,8 @@ export class NewPurchaseFormComponent implements OnInit {
   catListApiResult: ApiResult<CategoryMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
   productListApiResult: ApiResult<ProductMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
   vendorListApiResult: ApiResult<VendorMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
-  
+  currencyListApiResult: ApiResult<CurrencyMaster> = { dataList: [], result: false, message: 'Connection Not Available.' };
+
   // Properties bound to form inputs
   catId: number = 0;
   catName: string = '';
@@ -38,7 +41,7 @@ export class NewPurchaseFormComponent implements OnInit {
   itemQty: number = 0;
   amount: number = 0;
 
-  currency: string = '';
+  currency: string = '1';
   purchaseOrderNo: string = '';
   purchaseOrderRemark: string = '';
   purchaseOrderDt: string = new Date().toISOString().split('T')[0];
@@ -49,59 +52,71 @@ export class NewPurchaseFormComponent implements OnInit {
   filteredCategories: CategoryMaster[] = [];
   filteredProducts: ProductMaster[] = [];
   filteredVendors: VendorMaster[] = [];
+  filteredCurrency: CurrencyMaster[] = [];
 
   private purchaseService = inject(PurchaseMngService);
   private categoryService = inject(CategoryMngService);
   private productService = inject(ProductMngService);
   private vendorService = inject(VendorMngService);
-  
+  private currencyService = inject(CurrencyMngService);
+
   purchaseOrderSaveApi: PurchaseOrder | null = null;
 
   ngOnInit(): void {
     this.loadCategories();
     this.loadProductes();
     this.loadVendors();
+    this.loadCurrency();
   }
-  
+
 
   //#region Form submit
   onFormSubmit() {
     this.mapTableItemsToPurchaseItems();
 
-    const newOrder = new PurchaseOrder({
-      purchaseOrderDt: new Date(this.purchaseOrderDt),
-      purchaseExpDelDt: new Date(this.purchaseDeliveryDt),
-      purchaseCurrency: this.currency,
-      purchaseRemark: this.purchaseOrderRemark,
-      created: new Date(new Date().toISOString()),
-      createdBy: 'valueFromSession'
-    });
+    if (this.currency == '' || this.currency == null || this.currency == undefined) {
+      alert('Select Currency...');
+      return;
+    }
 
-    // Initialize PurchaseOrderWitItems
-    const orderWithItems = new PurchaseOrderWitItems({
-      purchaseOrder: newOrder,
-      purchaseItems: this.purchaseItems
-    });
+    if (this.purchaseItems.length <= 0) {
+      alert('Add Items...');
+      return;
+    }
 
 
-    this.purchaseService.purchaseOrder(orderWithItems).subscribe({
-      next: (response: ApiResult<PurchaseOrder>) => {
-        if (response.result) {
-          this.purchaseOrderSaveApi = response.data ?? null;
-          this.purchaseOrderNo = this.purchaseOrderSaveApi?.purchaseOrderNo ?? '';
-          alert('Save Successfully.. Check Your Order no.');
+      const newOrder = new PurchaseOrder({
+        purchaseOrderDt: new Date(this.purchaseOrderDt),
+        purchaseExpDelDt: new Date(this.purchaseDeliveryDt),
+        purchaseCurrency: this.currency,
+        purchaseRemark: this.purchaseOrderRemark,
+        created: new Date(new Date().toISOString()),
+        createdBy: 'valueFromSession'
+      });
+
+      // Initialize PurchaseOrderWitItems
+      const orderWithItems = new PurchaseOrderWitItems({
+        purchaseOrder: newOrder,
+        purchaseItems: this.purchaseItems
+      });
+
+
+      this.purchaseService.purchaseOrder(orderWithItems).subscribe({
+        next: (response: ApiResult<PurchaseOrder>) => {
+          if (response.result) {
+            this.purchaseOrderSaveApi = response.data ?? null;
+            this.purchaseOrderNo = this.purchaseOrderSaveApi?.purchaseOrderNo ?? '';
+            alert('Save Successfully.. Check Your Order no.');
+          }
+          else {
+            alert('Fail To Save');
+          }
+
+        },
+        error: (err) => {
+          console.error('Error fetching Users', err);
         }
-        else {
-          alert('Fail To Save');
-        }
-
-      },
-      error: (err) => {
-        console.error('Error fetching Users', err);
-      }
-    });
-
-
+      });
   }
 
   // Method to map tableItems to PurchaseItem
@@ -146,6 +161,11 @@ export class NewPurchaseFormComponent implements OnInit {
 
   // Method to add a new row
   addRow() {
+
+    if (this.catId == 0 || this.proId == 0 || this.venId == 0 || this.itemRate == 0 || this.itemQty == 0 || this.amount == 0) {
+      return;
+    }
+
     // Create a new item with the values from the form
     const newItem = {
       catId: this.catId,
@@ -227,45 +247,58 @@ export class NewPurchaseFormComponent implements OnInit {
   }
   //#endregion
 
-//#region Bind Drop Downs
-private loadCategories(): void {
-  this.categoryService.getCategories().subscribe({
-    next: (response: ApiResult<CategoryMaster>) => {
-      this.catListApiResult = response;
-      this.filteredCategories = response.dataList ?? [];
-    },
-    error: (err) => {
-      console.error('Error fetching categories', err);
-      this.catListApiResult = { dataList: [], result: false, message: 'Error fetching categories' };
-      this.filteredCategories = [];
-    }
-  });
-}
-private loadProductes(): void {
-  this.productService.getProducts().subscribe({
-    next: (response: ApiResult<ProductMaster>) => {
-      this.productListApiResult = response;
-      this.filteredProducts = response.dataList ?? [];
-    },
-    error: (err) => {
-      console.error('Error fetching products', err);
-      this.productListApiResult = { dataList: [], result: false, message: 'Error fetching products' };
-      this.filteredProducts = [];
-    }
-  });
-}
-private loadVendors(): void {
-  this.vendorService.getVendors().subscribe({
-    next: (response: ApiResult<VendorMaster>) => {
-      this.vendorListApiResult = response;
-      this.filteredVendors = response.dataList ?? [];
-    },
-    error: (err) => {
-      console.error('Error fetching vendors', err);
-      this.vendorListApiResult = { dataList: [], result: false, message: 'Error fetching vendors' };
-      this.filteredVendors = [];
-    }
-  });
-}
-//#endregion Bind Drop Downs
+  //#region Bind Drop Downs
+  private loadCategories(): void {
+    this.categoryService.getCategories().subscribe({
+      next: (response: ApiResult<CategoryMaster>) => {
+        this.catListApiResult = response;
+        this.filteredCategories = response.dataList ?? [];
+      },
+      error: (err) => {
+        console.error('Error fetching categories', err);
+        this.catListApiResult = { dataList: [], result: false, message: 'Error fetching categories' };
+        this.filteredCategories = [];
+      }
+    });
+  }
+  private loadProductes(): void {
+    this.productService.getProducts().subscribe({
+      next: (response: ApiResult<ProductMaster>) => {
+        this.productListApiResult = response;
+        this.filteredProducts = response.dataList ?? [];
+      },
+      error: (err) => {
+        console.error('Error fetching products', err);
+        this.productListApiResult = { dataList: [], result: false, message: 'Error fetching products' };
+        this.filteredProducts = [];
+      }
+    });
+  }
+  private loadVendors(): void {
+    this.vendorService.getVendors().subscribe({
+      next: (response: ApiResult<VendorMaster>) => {
+        this.vendorListApiResult = response;
+        this.filteredVendors = response.dataList ?? [];
+      },
+      error: (err) => {
+        console.error('Error fetching vendors', err);
+        this.vendorListApiResult = { dataList: [], result: false, message: 'Error fetching vendors' };
+        this.filteredVendors = [];
+      }
+    });
+  }
+  private loadCurrency(): void {
+    this.currencyService.getCurrencies().subscribe({
+      next: (response: ApiResult<CurrencyMaster>) => {
+        this.currencyListApiResult = response;
+        this.filteredCurrency = response.dataList ?? [];
+      },
+      error: (err) => {
+        console.error('Error fetching vendors', err);
+        this.currencyListApiResult = { dataList: [], result: false, message: 'Error fetching vendors' };
+        this.filteredCurrency = [];
+      }
+    });
+  }
+  //#endregion Bind Drop Downs
 }

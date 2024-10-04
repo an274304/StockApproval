@@ -2,7 +2,7 @@ import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { UserMngService } from '../../../services/user-mng.service';
 import { UserMaster } from '../../../../core/Models/UserMaster';
 import { ApiResult } from '../../../../core/DTOs/ApiResult';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BranchMngService } from '../../../services/branch-mng.service';
 import { BranchMaster } from '../../../../core/Models/BranchMaster';
@@ -46,31 +46,31 @@ export class UserMngComponent {
   constructor(private fb: FormBuilder) {
     this.userForm = this.fb.group({
       id: [0],
-      usTypeId: [null],
-      usBranchId: [null],
-      usDepartmentId: [null],
-      usName: [''],
+      usTypeId: [null, Validators.required],
+      usBranchId: [null, Validators.required],
+      usDepartmentId: [null, Validators.required],
+      usName: ['', [Validators.required, Validators.minLength(3)]],
       usCode: [''],
       usPrefix: [''],
-      usTypeName: [''],
       usImg: [null],
-      usAddress: [''],
-      usEmail: [''],
-      usMob: [''],
+      usAddress: ['', Validators.required],
+      usEmail: ['', [Validators.required, Validators.email]],
+      usMob: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]], // Adjust the pattern as needed
       usGstin: [''],
       status: [false],
       created: [null],
       createdBy: [''],
       updated: [null],
-      updatedBy: ['']
+      updatedBy: [''],
+      usPassword: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
   ngOnInit(): void {
     this.loadUsers();
+    this.loadUserTypeMaster();
     this.loadBranches();
     this.loadDepartments();
-    this.loadUserTypeMaster();
   }
 
   private loadUsers(): void {
@@ -109,7 +109,7 @@ export class UserMngComponent {
       },
       error: (err) => {
         console.error('Error fetching userTypeMaster', err);
-        this.departmentListApiResult = { dataList: [], result: false, message: 'Error fetching userTypeMaster' };
+        this.userTypeMasterListApiResult = { dataList: [], result: false, message: 'Error fetching userTypeMaster' };
         this.filteredUserTypeMaster = [];
       }
     });
@@ -178,19 +178,21 @@ export class UserMngComponent {
 
   resetForm(): void {
     this.userForm.reset();
+    this.userForm.markAsPristine();
     this.selectedUser = null;
     this.imagePreviewUrl = null;
   }
 
   submitForm(): void {
     if (this.userForm.invalid) {
+      this.userForm.markAllAsTouched();
       console.warn('Form is invalid');
       return;
     }
 
     const formData = new FormData();
     this.appendFormData(formData);
-
+  
     const saveOrUpdate$ = this.selectedUser?.id ?
       this.userService.updateUser(formData) :
       this.userService.saveUser(formData);
@@ -221,13 +223,14 @@ export class UserMngComponent {
     formData.append('usName', this.userForm.get('usName')?.value ?? '');
    
     const selectedTypeId = this.userForm.get('usTypeId')?.value;
-    const selectedType = this.filteredUserTypeMaster.find(type => type.id === selectedTypeId);
+    const selectedType = this.filteredUserTypeMaster.find(type => type.id == selectedTypeId);
     const usTypeName = selectedType ? selectedType.usTypeName : ''; // Ensure this is always a string
     formData.append('usTypeName', usTypeName!);
 
     formData.append('usEmail', this.userForm.get('usEmail')?.value ?? '');
     formData.append('usMob', this.userForm.get('usMob')?.value ?? '');
     formData.append('usAddress', this.userForm.get('usAddress')?.value ?? '');
+    formData.append('usPassword', this.userForm.get('usPassword')?.value ?? '');
     formData.append('created', new Date().toISOString());
     formData.append('createdBy', 'getSessionIN');
     formData.append('updated', new Date().toISOString());

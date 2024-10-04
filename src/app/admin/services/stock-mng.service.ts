@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { PurchaseOrderWitItems } from '../../core/DTOs/PurchaseOrderWitItems';
 import { UpdateNewStockItem } from '../../core/DTOs/UpdateNewStockItem';
 import { StockItemMaster } from '../../core/Models/StockItemMaster';
+import { ShowAvailableStockTable } from '../../core/DTOs/ShowAvailableStockTable';
 
 @Injectable({
   providedIn: 'root'
@@ -28,5 +29,9 @@ export class StockMngService {
 
   loadUpdatedStockMasterItems(purchaseOrderNo: string): Observable<ApiResult<StockItemMaster>> {
     return this.http.get<ApiResult<StockItemMaster>>(`${ApiUrl.baseApiUrl}${ApiUrl.stock.Load_Updated_Stock_Master_Items}${purchaseOrderNo}`);
+  }
+
+  GetAvailableStockAtAdmin(): Observable<ApiResult<ShowAvailableStockTable>> {
+    return this.http.get<ApiResult<ShowAvailableStockTable>>(`${ApiUrl.baseApiUrl}${ApiUrl.stock.Get_Available_Stock_At_Admin}`);
   }
 }

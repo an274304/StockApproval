@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiResult } from '../../../../core/DTOs/ApiResult';
 import { ProductMaster } from '../../../../core/Models/ProductMaster';
 import { ProductMngService } from '../../../services/product-mng.service';
@@ -39,10 +39,10 @@ export class ProductMngComponent {
   constructor(private fb: FormBuilder) {
     this.productForm = this.fb.group({
       id: [0],
-      catId: [0],
-      proName: [''],
-      proCode: [''],
-      proPrefix: [''],
+      catId: [null, [Validators.required]], // Ensure a category is selected
+      proName: ['', [Validators.required, Validators.maxLength(100)]], // Required and max length
+      proCode: ['', [Validators.required]], // Required
+      proPrefix: ['', [Validators.maxLength(50)]], // Optional, but max length
       proType: [''],
       proImg: [null],
       proBuyDt: [null],
@@ -137,12 +137,14 @@ export class ProductMngComponent {
 
   resetForm(): void {
     this.productForm.reset();
+    this.productForm.markAsPristine();
     this.selectedProduct = null;
     this.imagePreviewUrl = null;
   }
 
   submitForm(): void {
     if (this.productForm.invalid) {
+      this.productForm.markAllAsTouched(); // Mark all controls as touched to trigger validation messages
       console.warn('Form is invalid');
       return;
     }

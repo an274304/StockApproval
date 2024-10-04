@@ -1,5 +1,5 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormGroupName, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormGroupName, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiResult } from '../../../../core/DTOs/ApiResult';
 import { BranchMaster } from '../../../../core/Models/BranchMaster';
 import { CommonModule } from '@angular/common';
@@ -29,9 +29,9 @@ export class BranchMngComponent implements OnInit {
   constructor(private fb: FormBuilder) {
     this.branchForm = this.fb.group({
       id: [0],
-      branchName: [''],
-      branchCode: [''],
-      branchPrefix: [''],
+      branchName: ['', [Validators.required, Validators.maxLength(100)]], // Required and max length 100
+      branchCode: ['', [Validators.required, Validators.maxLength(10)]], // Required and max length 10
+      branchPrefix: ['', [Validators.required, Validators.maxLength(5)]], // Required and max length 5
       branchImg: [null],
       status: [false],
       created: [null],
@@ -108,13 +108,14 @@ export class BranchMngComponent implements OnInit {
 
   resetForm(): void {
     this.branchForm.reset();
+    this.branchForm.markAsPristine();
     this.selectedBranch = null;
     this.imagePreviewUrl = null;
   }
 
   submitForm(): void {
     if (this.branchForm.invalid) {
-      console.warn('Form is invalid');
+      this.branchForm.markAllAsTouched(); // Mark all fields as touched to show errors
       return;
     }
   
@@ -128,6 +129,7 @@ export class BranchMngComponent implements OnInit {
     saveOrUpdate$.subscribe({
       next: (response: ApiResult<BranchMaster>) => {
         this.branchSaveApiResult = response;
+        console.log(response.result);
         if (response.result) {
           alert(this.selectedBranch ? 'Updated successfully' : 'Saved successfully');
           this.loadBranches();

@@ -28,6 +28,11 @@ export class LogInComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+
+    const userRole = this.globalState.getUserRole();
+    if(userRole){
+      this.redirectBasedOnRole(userRole);
+    }
    
   }
 
@@ -38,10 +43,11 @@ export class LogInComponent implements OnInit, AfterViewInit {
         next: (response) => {
           this.globalState.setToken(response.token);
           this.globalState.setUserName(response.userName);
+          this.globalState.setUserImage(response.userImage);
           this.globalState.setUserId(response.userId);
           this.globalState.setUserRole(response.userRole);
           this.globalState.setIsAuthenticated('true');
-          this.redirectBasedOnRole();
+          this.redirectBasedOnRole(response.userRole);
         },
         error: () => {
           alert('Wrong Credentials...');
@@ -50,16 +56,16 @@ export class LogInComponent implements OnInit, AfterViewInit {
     }
   }
 
-  redirectBasedOnRole(): void {
-    const userRole = this.globalState.getUserRole();
-
+  redirectBasedOnRole(userRole : string): void {
+   
     if (userRole === 'Admin') {
       this.router.navigate(['/admin']);
     } else if (userRole === 'Director') {
       this.router.navigate(['/director']);
     } else if (userRole === 'Account') {
-      this.router.navigate(['/accounts']);
+      this.router.navigate(['/account']);
     }
+
   }
 
   ngAfterViewInit(): void {

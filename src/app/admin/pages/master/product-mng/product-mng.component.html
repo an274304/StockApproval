@@ -53,22 +53,34 @@
                             <div class="col-md-3">
                                 <label class="form-label">Category Name</label>
                                 <select formControlName="catId" class="form-select rounded-0">
-                                    <option value="0" selected disabled>Choose...</option>
-                                    <option *ngFor="let category of filteredCategories" [value]="category.id">{{ category.catName }}</option>
-                                  </select>
-                            </div>
-                            <div class="col-md-3">
+                                  <option value="0" selected disabled>Choose...</option>
+                                  <option *ngFor="let category of filteredCategories" [value]="category.id">{{ category.catName }}</option>
+                                </select>
+                                <div *ngIf="productForm.get('catId')?.invalid && (productForm.get('catId')?.touched || productForm.get('catId')?.dirty)" class="text-danger">
+                                  Category is required.
+                                </div>
+                              </div>
+                              <div class="col-md-3">
                                 <label class="form-label">Product Name</label>
                                 <input type="text" formControlName="proName" class="form-control rounded-0" placeholder="Product Name">
-                            </div>
-                            <div class="col-md-3">
+                                <div *ngIf="productForm.get('proName')?.invalid && (productForm.get('proName')?.touched || productForm.get('proName')?.dirty)" class="text-danger">
+                                  <small>Product Name is required.</small>
+                                </div>
+                              </div>
+                              <div class="col-md-3">
                                 <label class="form-label">Product Code</label>
                                 <input type="text" formControlName="proCode" class="form-control rounded-0" placeholder="Product Code">
-                            </div>
-                            <div class="col-md-3">
+                                <div *ngIf="productForm.get('proCode')?.invalid && (productForm.get('proCode')?.touched || productForm.get('proCode')?.dirty)" class="text-danger">
+                                  <small>Product Code is required.</small>
+                                </div>
+                              </div>
+                              <div class="col-md-3">
                                 <label class="form-label">Product Prefix</label>
                                 <input type="text" formControlName="proPrefix" class="form-control rounded-0" placeholder="Product Prefix">
-                            </div>
+                                <div *ngIf="productForm.get('proPrefix')?.invalid && (productForm.get('proPrefix')?.touched || productForm.get('proPrefix')?.dirty)" class="text-danger">
+                                  <small>Product Prefix is required.</small>
+                                </div>
+                              </div>
                             <div class="col-md-3">
                                 <label class="form-label">Product Image</label>
                                 <input type="file" formControlName="proImg"  (change)="onFileChange($event)" #productFileInput class="form-control rounded-0">

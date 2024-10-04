@@ -49,7 +49,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <label for="inputDODt" class="col-sm-3 col-form-label">D.O Date</label>
+                                        <label for="inputDODt" class="col-sm-3 col-form-label">D.O Date<span><sup class="text-danger">*</sup></span> </label>
                                         <div class="col-sm-9">
                                             <input type="date" class="form-control" id="inputDODt"
                                                 [(ngModel)]="purchaseDeliveryDt" name="purchaseDeliveryDt"
@@ -183,10 +183,11 @@
                                                 <select [(ngModel)]="currency" name="currency"
                                                     (change)="onCurrencyChange($event)" class="form-select rounded-0"
                                                     required>
-                                                    <option value="" disabled selected>Select Currency</option>
-                                                    <option value="1">Rupees</option>
+                                                    <option *ngFor="let currency of filteredCurrency" [value]="currency.id">
+                                                        {{ currency.currName }}
+                                                      </option>
                                                 </select>
-                                                <div *ngIf="currency === '' || !currency" class="text-danger" style="text-align: start!important;">
+                                                <div *ngIf="currency == '' || !currency" class="text-danger" style="text-align: start!important;">
                                                     Currency is required.
                                                 </div>
                                             </td>

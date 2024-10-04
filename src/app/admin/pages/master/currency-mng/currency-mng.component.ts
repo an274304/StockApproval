@@ -1,7 +1,7 @@
 import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { ApiResult } from '../../../../core/DTOs/ApiResult';
 import { CurrencyMaster } from '../../../../core/Models/CurrencyMaster';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CurrencyMngService } from '../../../services/currency-mng.service';
 import { CommonModule } from '@angular/common';
 
@@ -31,12 +31,12 @@ export class CurrencyMngComponent {
   
     this.currencyForm = this.fb.group({
       id: [0],
-      currName: [''],
-      currCode: [''],
-      currPrefix: [''],
+      currName: ['', [Validators.required, Validators.minLength(2)]],  // Minimum 2 characters
+      currCode: ['', [Validators.required, Validators.maxLength(3)]],  // Max length 3
+      currPrefix: ['', Validators.required],  // Added required validation
       currSymbol: [''],
-      currInrVal: [null],
-      currInrValDate: [today], // Set today's date
+      currInrVal: [null, [Validators.required, Validators.pattern("^[0-9]*$")]], // Must be a number
+      currInrValDate: [today, Validators.required],  // Date is required
       status: [false],
       created: [null],
       createdBy: [''],
@@ -47,6 +47,7 @@ export class CurrencyMngComponent {
   ngOnInit(): void {
     this.loadCurrency();
   }
+
 
   private loadCurrency(): void {
     this.currencyService.getCurrencies().subscribe({
@@ -111,12 +112,15 @@ export class CurrencyMngComponent {
 
   resetForm(): void {
     this.currencyForm.reset();
+    this.currencyForm.markAsPristine();
     this.selectedCurrency = null;
     this.imagePreviewUrl = null;
   }
 
   submitForm(): void {
     if (this.currencyForm.invalid) {
+      // Mark all fields as touched so errors show up
+      this.currencyForm.markAllAsTouched();
       console.warn('Form is invalid');
       return;
     }

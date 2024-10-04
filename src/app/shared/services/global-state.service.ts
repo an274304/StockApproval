@@ -7,6 +7,7 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 export class GlobalStateService {
   private tokenKey = 'token';
   private userNameKey = 'userName';
+  private userImage = 'userImage';
   private userIdKey = 'userId';
   private userRoleKey = 'userRole';
   private userIsAuthenticated = 'userIsAuthenticated';
@@ -37,6 +38,21 @@ export class GlobalStateService {
   getUserName(): string | null {
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem(this.userNameKey);
+    }
+ 
+    return null;
+  }
+
+  setUserImage(userImage: string): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(this.userImage, userImage);
+    }
+   
+  }
+
+  getUserImage(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem(this.userImage);
     }
  
     return null;
@@ -87,6 +103,7 @@ export class GlobalStateService {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem(this.tokenKey);
       localStorage.removeItem(this.userNameKey);
+      localStorage.removeItem(this.userImage);
       localStorage.removeItem(this.userIdKey);
       localStorage.removeItem(this.userRoleKey);
       localStorage.removeItem(this.userIsAuthenticated);

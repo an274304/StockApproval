@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { GlobalStateService } from '../../../shared/services/global-state.service';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../shared/services/auth.service';
@@ -13,10 +13,17 @@ declare var $: any;
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.css'
 })
-export class AdminLayoutComponent implements AfterViewInit {
-  
+export class AdminLayoutComponent implements OnInit, AfterViewInit {
+  username : string = '';
+  userImg : string = '';
+
   constructor(private globalState: GlobalStateService, private router: Router, private authService : AuthService) {
    
+  }
+
+  ngOnInit(): void {
+    this.username= this.globalState.getUserName() ?? '';
+    this.userImg= this.globalState.getUserImage() ?? '/assets/images/avatars/01.png';
   }
 
   logOut(): void {

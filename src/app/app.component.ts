@@ -42,7 +42,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     } else if (userRole === 'director') {
       this.router.navigate(['/director']);
     } else if (userRole === 'account') {
-      this.router.navigate(['/accounts']);
+      this.router.navigate(['/account']);
     }
   }
 }

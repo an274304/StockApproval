@@ -78,7 +78,7 @@ export class ViewPendingBillComponent implements OnInit {
         next: (response: ApiResult<object>) => {
           if (response.result) {
             alert('successfully aprove');
-            this.router.navigate(['']);
+            this.router.navigate(['/director']);
           }
           else {
             alert('Fail To Approve');
@@ -100,7 +100,7 @@ export class ViewPendingBillComponent implements OnInit {
         next: (response: ApiResult<object>) => {
           if (response.result) {
             alert('successfully rejected');
-            this.router.navigate(['']);
+            this.router.navigate(['/director']);
           }
           else {
             alert('Fail To Reject');

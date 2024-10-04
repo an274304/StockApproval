@@ -27,7 +27,7 @@ export class AuthService {
 
   // For Api Hit
   LogIn(Email:string, Password:string, isRemember:boolean){
-    return this.http.post<{token:string, userName:string, userId:string, userRole:string}>(`${ApiUrl.baseApiUrl}${ApiUrl.auth.AUTH}`,
+    return this.http.post<{token:string, userName:string, userId:string, userRole:string, userImage:string}>(`${ApiUrl.baseApiUrl}${ApiUrl.auth.AUTH}`,
       {
         email:Email,
         password:Password,

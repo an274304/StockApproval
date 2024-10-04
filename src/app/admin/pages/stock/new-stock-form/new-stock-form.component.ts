@@ -84,6 +84,12 @@ export class NewStockFormComponent implements OnInit {
 
   // Method to handle Add To Stock button click
   addToStock() {
+
+    if (!this.validateForm()) {
+      alert('Please fill in all required expiry dates.');
+      return;
+  }
+
     const newStockItems: UpdateNewStockItem[] = [];
 
     // Loop through the purchase items and create a list of UpdateNewStockItem
@@ -138,4 +144,17 @@ export class NewStockFormComponent implements OnInit {
 
     return `${day}-${month}-${year}`;
   };
+
+  validateForm(): boolean {
+    let isValid = true;
+
+    this.formDataApiResult.data?.purchaseItems?.forEach(item => {
+        if (!item.updated) {
+            isValid = false;
+        }
+    });
+
+    return isValid;
+}
+
 }
